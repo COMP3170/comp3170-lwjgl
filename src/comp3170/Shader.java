@@ -10,12 +10,21 @@ import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.lwjgl.system.MemoryStack;
+
+/**
+ * Version 2023.1
+ * 
+ * 2023.1: Rewrote code to work in LWJGL 3
+ * 2022.1: Factored into Shader, GLBuffers, and GLTypes to allow shaders to share buffers
+ * 
+ * @author Malcolm Ryan
+ */
 
 public class Shader {
 
 	private int program;
+	private boolean strict = true;
 	private HashMap<String, Integer> attributes;
 	private HashMap<String, Integer> attributeTypes;
 	private HashMap<String, Boolean> trackedAttributeErrors;
@@ -50,6 +59,38 @@ public class Shader {
 		recordAttributes();
 		recordUniforms();
 	}
+	
+	/**
+	 * Check whether uniform & attribute names are being enforced.
+	 * 
+	 * @return true if names are being enforced
+	 */
+	public boolean isStrict() {
+		return strict;
+	}
+	
+	/**
+	 * Set whether uniform & attribute names are being enforced.
+	 * 
+	 * If true, incorrect uniform and attribute names will throw exceptions.
+	 * If false, incorrect uniform and attribute names will print a message to the console and continue.
+	 * 
+	 * @param strict
+	 */
+	public void setStrict(boolean strict) {
+		this.strict = strict;
+	}
+	
+	/**
+	 * Enable the shader
+	 */
+
+	public void enable() {
+		glUseProgram(program);
+//		glBindVertexArray(this.vao);
+	}
+
+
 	
 	//
 	// Shader compilation
@@ -189,6 +230,72 @@ public class Shader {
 			uniforms.put(name, glGetUniformLocation(program, name));
 			uniformTypes.put(name, typeBuffer.get(0));
 		}
+	}
+
+	/**
+	 * Check if the shader has a particular attribute
+	 * 
+	 * @param name	The name of the attribute
+	 * @return true if the shader has an attribute with the name provided
+	 */
+
+	public boolean hasAttribute(String name) {
+		return attributes.containsKey(name);
+	}
+
+	/**
+	 * Check if the shader has a particular uniform
+	 * 
+	 * @param name	The name of the uniform
+	 * @return true if the shader has a uniform with the name provided
+	 */
+
+	public boolean hasUniform(String name) {
+		return uniforms.containsKey(name);
+	}
+
+	/**
+	 * Get the handle for an attribute
+	 * 
+	 * @param name	The name of the attribute
+	 * @return	The OpenGL handle for the attribute
+	 */
+
+	public int getAttribute(String name) {
+		if (!attributes.containsKey(name)) {
+			String message = String.format("Unknown attribute: '%s'", name);
+			if(strict) {
+				throw new IllegalArgumentException(message);
+			} else if(!this.trackedAttributeErrors.containsKey(name)) {
+				System.err.println(message);
+				this.trackedAttributeErrors.put(name, true);
+			}
+			return -1;
+		}
+
+		return attributes.get(name);
+	}
+
+	/**
+	 * Get the handle for a uniform
+	 * 
+	 * @param name	The name of the uniform
+	 * @return	The OpenGL handle for the uniform 
+	 */
+
+	public int getUniform(String name) {
+		if (!uniforms.containsKey(name)) {
+			String message = String.format("Unknown uniform: '%s'", name);
+			if(strict) {
+				throw new IllegalArgumentException(message);
+			} else if(!trackedUniformErrors.containsKey(name)) {
+				System.err.println(message);
+				this.trackedUniformErrors.put(name, true);
+			}
+			return -1;
+		}
+
+		return uniforms.get(name);
 	}
 
 	
