@@ -1,7 +1,12 @@
 package comp3170;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
+import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
+import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
@@ -25,13 +30,10 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.IntBuffer;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -49,6 +51,10 @@ import org.lwjgl.system.MemoryStack;
 
 public class Window {
 
+	// This code assumes OpenGL 4.1
+	private final static int MAJOR_VERSION = 4;
+	private final static int MINOR_VERSION = 1;
+	
 	// The window handle
 	private String title;
 	private long window;
@@ -104,13 +110,13 @@ public class Window {
 		this.windowListener = windowListener;
 	}
 	
-	public void run() {
+	public void run() throws GLException {
 		init();
 		loop();
 		close();
 	}
 
-	private void init() {
+	private void init() throws GLException {
 		// Setup an error callback. The default implementation
 		// will print the error message in System.err.
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -122,6 +128,13 @@ public class Window {
 
 		// Configure GLFW
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
+		
+		// 
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, MAJOR_VERSION);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MINOR_VERSION);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);	// remove deprecated content
+	
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
 		glfwWindowHint(GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE); // whether the window will be resizable
 
@@ -171,9 +184,16 @@ public class Window {
 
 		// Make the window visible
 		glfwShowWindow(window);
+
+		GLCapabilities capabilities = GL.createCapabilities();
+		
+		if (!capabilities.OpenGL41) {
+			throw new GLException("OpenGL 4.1 is not supported");
+		}
+		
 	}
 
-	private void loop() {
+	private void loop()  {
 		// This line is critical for LWJGL's interoperation with GLFW's
 		// OpenGL context, or any context that is managed externally.
 		// LWJGL detects the context that is current in the current thread,
