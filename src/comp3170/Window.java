@@ -36,6 +36,7 @@ import java.util.Set;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
 
 /**
@@ -53,16 +54,48 @@ public class Window {
 	private long window;
 	private int preferredWidth;
 	private int preferredHeight;
-	private boolean fullScreen;
+	private boolean resizable = false;
+	private boolean fullScreen = false;
 
-	private Set<IWindowListener> listeners;
-	
-	public Window(String title, int width, int height, boolean fullScreen) {
+	private IWindowListener windowListener;
+
+	/**
+	 * Create a window.
+	 * 
+	 * @param title The window title.
+	 * @param width The desired width of the window (in pixels)
+	 * @param height The desired height of the window (in pixels)
+	 * @param resizable Whether the window should be resizable.
+	 */
+	public Window(String title, int width, int height, boolean resizable, IWindowListener windowListener) {
 		this.title = title;
-		this.fullScreen = fullScreen;
+		this.resizable = resizable;
 		this.preferredWidth = width;
 		this.preferredHeight = height;
-		this.listeners = new HashSet<IWindowListener>();
+		this.windowListener = null;
+	}
+
+	/**
+	 * Create a non-resizable window.
+	 * 
+	 * @param title The window title.
+	 * @param width The desired width of the window (in pixels)
+	 * @param height The desired height of the window (in pixels)
+	 */
+	public Window(String title, int width, int height, IWindowListener windowListener) {
+		this(title, width, height, false, windowListener);
+	}
+	
+	/**
+	 * Create a fullscreen window.
+	 * 
+	 * @param title The window title.
+	 */
+	public Window(String title, IWindowListener windowListener) {
+		this.title = title;
+		this.resizable = false;
+		this.fullScreen = true;
+		this.windowListener = windowListener;
 	}
 	
 	public void run() {
@@ -71,14 +104,6 @@ public class Window {
 		close();
 	}
 
-	public void addListener(IWindowListener listener) {
-		listeners.add(listener);
-	}
-	
-	public void removeListener(IWindowListener listener) {
-		listeners.remove(listener);
-	}
-	
 	private void init() {
 		// Setup an error callback. The default implementation
 		// will print the error message in System.err.
@@ -92,7 +117,7 @@ public class Window {
 		// Configure GLFW
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+		glfwWindowHint(GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE); // whether the window will be resizable
 
 		// Get the monitor if full screen
 		
@@ -106,7 +131,7 @@ public class Window {
 		if ( window == NULL ) {
 			throw new RuntimeException("Failed to create the GLFW window");			
 		}
-
+		
 		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE ) {
@@ -148,14 +173,14 @@ public class Window {
 		// LWJGL detects the context that is current in the current thread,
 		// creates the GLCapabilities instance and makes the OpenGL
 		// bindings available for use.
-		GL.createCapabilities();
+		GLCapabilities capabilities = GL.createCapabilities();
 
-		initListeners();
+		windowListener.init(capabilities);
 		
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {
-			drawListeners();
+			windowListener.draw();
 
 			glfwSwapBuffers(window); // swap the color buffers
 
@@ -167,7 +192,7 @@ public class Window {
 
 
 	private void close() {
-		closeListeners();
+		windowListener.close();
 		
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
@@ -178,29 +203,5 @@ public class Window {
 		glfwSetErrorCallback(null).free();
 	}
 	
-	private void initListeners() {
-		for (IWindowListener wl : listeners) {
-			wl.init();
-		}
-	}
-	
-	private void drawListeners() {
-		for (IWindowListener wl : listeners) {
-			wl.draw();
-		}
-	}
-
-	private void reshapeListeners() {
-		for (IWindowListener wl : listeners) {
-			wl.reshape();
-		}
-	}
-
-	private void closeListeners() {
-		for (IWindowListener wl : listeners) {
-			wl.close();
-		}
-	}
-
 	
 }
