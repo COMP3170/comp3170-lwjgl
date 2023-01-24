@@ -3,8 +3,9 @@ package comp3170;
 import static org.lwjgl.opengl.GL41.*;
 
 /**
- * Version 2022.1
+ * Version 2023.1
  * 
+ * 2023.1: Converted to LWJGL 3
  * 2022.1: Factored out of Shader class
  * 
  * @author Malcolm Ryan
