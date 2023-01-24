@@ -1,22 +1,31 @@
 package comp3170;
 
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.BufferUtils.createFloatBuffer;
+import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.system.MemoryStack.*;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.joml.Matrix2f;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 /**
  * Version 2023.1
  * 
- * 2023.1: Rewrote code to work in LWJGL 3
- * 2022.1: Factored into Shader, GLBuffers, and GLTypes to allow shaders to share buffers
+ * 2023.1: Rewrote code to work in LWJGL 3 2022.1: Factored into Shader,
+ * GLBuffers, and GLTypes to allow shaders to share buffers
  * 
  * @author Malcolm Ryan
  */
@@ -31,6 +40,14 @@ public class Shader {
 	private HashMap<String, Integer> uniforms;
 	private HashMap<String, Integer> uniformTypes;
 	private HashMap<String, Boolean> trackedUniformErrors;
+
+	private FloatBuffer matrix2Buffer = createFloatBuffer(4);
+	private FloatBuffer matrix3Buffer = createFloatBuffer(9);
+	private FloatBuffer matrix4Buffer = createFloatBuffer(16);
+
+	private FloatBuffer vector2Buffer = createFloatBuffer(2);
+	private FloatBuffer vector3Buffer = createFloatBuffer(3);
+	private FloatBuffer vector4Buffer = createFloatBuffer(4);
 
 	public Shader(File vertexShaderFile, File fragmentShaderFile) throws IOException, GLError {
 
@@ -59,7 +76,7 @@ public class Shader {
 		recordAttributes();
 		recordUniforms();
 	}
-	
+
 	/**
 	 * Check whether uniform & attribute names are being enforced.
 	 * 
@@ -68,19 +85,20 @@ public class Shader {
 	public boolean isStrict() {
 		return strict;
 	}
-	
+
 	/**
 	 * Set whether uniform & attribute names are being enforced.
 	 * 
-	 * If true, incorrect uniform and attribute names will throw exceptions.
-	 * If false, incorrect uniform and attribute names will print a message to the console and continue.
+	 * If true, incorrect uniform and attribute names will throw exceptions. If
+	 * false, incorrect uniform and attribute names will print a message to the
+	 * console and continue.
 	 * 
 	 * @param strict
 	 */
 	public void setStrict(boolean strict) {
 		this.strict = strict;
 	}
-	
+
 	/**
 	 * Enable the shader
 	 */
@@ -90,8 +108,6 @@ public class Shader {
 //		glBindVertexArray(this.vao);
 	}
 
-
-	
 	//
 	// Shader compilation
 	//
@@ -133,7 +149,7 @@ public class Shader {
 		GLError.checkGLErrors();
 		glShaderSource(shader, source);
 		glCompileShader(shader);
-		GLError.checkGLErrors();	
+		GLError.checkGLErrors();
 
 		// check compilation
 
@@ -177,8 +193,8 @@ public class Shader {
 
 	//
 	// Uniforms and Attributes
-	// 
-	
+	//
+
 	/**
 	 * Establish the mapping from attribute names to IDs
 	 */
@@ -188,11 +204,12 @@ public class Shader {
 		attributeTypes = new HashMap<String, Integer>();
 		trackedAttributeErrors = new HashMap<String, Boolean>();
 
-		int activeAttributes = glGetProgrami(program, GL_ACTIVE_ATTRIBUTES);		
+		int activeAttributes = glGetProgrami(program, GL_ACTIVE_ATTRIBUTES);
 		int maxNameSize = glGetProgrami(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH);
 
-		// Use stack buffers for "any small buffer/struct allocation that is shortly-lived"
-		// https://blog.lwjgl.org/memory-management-in-lwjgl-3/
+		// Use stack buffers for "any small buffer/struct allocation that is
+		// shortly-lived"
+		// https://blog.lwjorg/memory-management-in-lwjgl-3/
 		MemoryStack stack = stackPush();
 		IntBuffer sizeBuffer = stack.mallocInt(1);
 		IntBuffer typeBuffer = stack.mallocInt(1);
@@ -207,7 +224,8 @@ public class Shader {
 
 	/**
 	 * Establish the mapping from uniform names to IDs
-	 * @param trackedUniformErrors 
+	 * 
+	 * @param trackedUniformErrors
 	 */
 
 	private void recordUniforms() {
@@ -218,8 +236,9 @@ public class Shader {
 		int activeUniforms = glGetProgrami(program, GL_ACTIVE_UNIFORMS);
 		int maxNameSize = glGetProgrami(program, GL_ACTIVE_UNIFORM_MAX_LENGTH);
 
-		// Use stack buffers for "any small buffer/struct allocation that is shortly-lived"
-		// https://blog.lwjgl.org/memory-management-in-lwjgl-3/
+		// Use stack buffers for "any small buffer/struct allocation that is
+		// shortly-lived"
+		// https://blog.lwjorg/memory-management-in-lwjgl-3/
 		MemoryStack stack = stackPush();
 		IntBuffer sizeBuffer = stack.mallocInt(1);
 		IntBuffer typeBuffer = stack.mallocInt(1);
@@ -235,7 +254,7 @@ public class Shader {
 	/**
 	 * Check if the shader has a particular attribute
 	 * 
-	 * @param name	The name of the attribute
+	 * @param name The name of the attribute
 	 * @return true if the shader has an attribute with the name provided
 	 */
 
@@ -246,7 +265,7 @@ public class Shader {
 	/**
 	 * Check if the shader has a particular uniform
 	 * 
-	 * @param name	The name of the uniform
+	 * @param name The name of the uniform
 	 * @return true if the shader has a uniform with the name provided
 	 */
 
@@ -257,16 +276,16 @@ public class Shader {
 	/**
 	 * Get the handle for an attribute
 	 * 
-	 * @param name	The name of the attribute
-	 * @return	The OpenGL handle for the attribute
+	 * @param name The name of the attribute
+	 * @return The OpenGL handle for the attribute
 	 */
 
 	public int getAttribute(String name) {
 		if (!attributes.containsKey(name)) {
 			String message = String.format("Unknown attribute: '%s'", name);
-			if(strict) {
+			if (strict) {
 				throw new IllegalArgumentException(message);
-			} else if(!this.trackedAttributeErrors.containsKey(name)) {
+			} else if (!this.trackedAttributeErrors.containsKey(name)) {
 				System.err.println(message);
 				this.trackedAttributeErrors.put(name, true);
 			}
@@ -279,16 +298,16 @@ public class Shader {
 	/**
 	 * Get the handle for a uniform
 	 * 
-	 * @param name	The name of the uniform
-	 * @return	The OpenGL handle for the uniform 
+	 * @param name The name of the uniform
+	 * @return The OpenGL handle for the uniform
 	 */
 
 	public int getUniform(String name) {
 		if (!uniforms.containsKey(name)) {
 			String message = String.format("Unknown uniform: '%s'", name);
-			if(strict) {
+			if (strict) {
 				throw new IllegalArgumentException(message);
-			} else if(!trackedUniformErrors.containsKey(name)) {
+			} else if (!trackedUniformErrors.containsKey(name)) {
 				System.err.println(message);
 				this.trackedUniformErrors.put(name, true);
 			}
@@ -298,7 +317,329 @@ public class Shader {
 		return uniforms.get(name);
 	}
 
-	
+	/**
+	 * Connect a buffer to a shader attribute
+	 * 
+	 * @param attributeName The name of the shader attribute
+	 * @param buffer        The buffer
+	 */
+	public void setAttribute(String attributeName, int buffer) {
+		int attribute = getAttribute(attributeName);
+		if (attribute < 0)
+			return;
+
+		int type = attributeTypes.get(attributeName);
+		GLBuffers.checkType(buffer, type);
+
+		int size = GLTypes.typeSize(type);
+		int elementType = GLTypes.elementType(type);
+
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+		glVertexAttribPointer(attribute, size, elementType, false, 0, 0);
+		glEnableVertexAttribArray(attribute);
+	}
+
+	/**
+	 * Set the value of a uniform to a boolean
+	 * 
+	 * @param uniformName The GLSL uniform
+	 * @param value       The int value
+	 */
+	public void setUniform(String uniformName, boolean value) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		switch (type) {
+		case GL_BOOL:
+			glUniform1ui(uniform, value ? 1 : 0);
+			break;
+		default:
+			throw new IllegalArgumentException(String.format("Expected %s got boolean", GLTypes.typeName(type)));
+		}
+	}
+
+	/**
+	 * Set the value of a uniform to an int
+	 * 
+	 * @param uniformName The GLSL uniform
+	 * @param value       The int value
+	 */
+	public void setUniform(String uniformName, int value) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		switch (type) {
+		case GL_UNSIGNED_INT:
+			glUniform1ui(uniform, value);
+			break;
+		case GL_INT:
+		case GL_SAMPLER_2D:
+		case GL_SAMPLER_CUBE:
+			glUniform1i(uniform, value);
+			break;
+		default:
+			throw new IllegalArgumentException(String.format("Expected %s got int", GLTypes.typeName(type)));
+		}
+	}
+
+	/**
+	 * Set the value of a uniform to a float
+	 * 
+	 * @param uniformName The GLSL uniform
+	 * @param value       The float value
+	 */
+	public void setUniform(String uniformName, float value) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT) {
+			throw new IllegalArgumentException(String.format("Expected %s got float", GLTypes.typeName(type)));
+		}
+
+		glUniform1f(uniform, value);
+	}
+
+	/**
+	 * Set the value of a uniform to an array of int
+	 * 
+	 * This works for GLSL types float, vec2, vec3, vec4, mat2, mat3 and mat4.
+	 * 
+	 * Note that for matrix types, the elements should be specified in column order
+	 * 
+	 * @param uniformName
+	 * @param value
+	 */
+	public void setUniform(String uniformName, int[] value) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+		int expectedArgs = GLTypes.typeSize(type);
+
+		if (value.length != expectedArgs) {
+			throw new IllegalArgumentException(
+					String.format("Expected %s got int[%d]", GLTypes.typeName(type), value.length));
+		}
+
+		switch (type) {
+		case GL_INT:
+			glUniform1i(uniform, value[0]);
+			break;
+		case GL_INT_VEC2:
+			glUniform2i(uniform, value[0], value[1]);
+			break;
+		case GL_INT_VEC3:
+			glUniform3i(uniform, value[0], value[1], value[2]);
+			break;
+		case GL_INT_VEC4:
+			glUniform4i(uniform, value[0], value[1], value[2], value[4]);
+			break;
+		case GL_UNSIGNED_INT:
+			glUniform1ui(uniform, value[0]);
+			break;
+		case GL_UNSIGNED_INT_VEC2:
+			glUniform2ui(uniform, value[0], value[1]);
+			break;
+		case GL_UNSIGNED_INT_VEC3:
+			glUniform3ui(uniform, value[0], value[1], value[2]);
+			break;
+		case GL_UNSIGNED_INT_VEC4:
+			glUniform4ui(uniform, value[0], value[1], value[2], value[4]);
+			break;
+		default:
+			throw new IllegalArgumentException(String.format("Cannot convert int array to %s", GLTypes.typeName(type)));
+		}
+	}
+
+	/**
+	 * Set the value of a uniform to an array of floats
+	 * 
+	 * This works for GLSL types float, vec2, vec3, vec4, mat2, mat3 and mat4.
+	 * 
+	 * Note that for matrix types, the elements should be specified in column order
+	 * 
+	 * @param uniformName
+	 * @param value
+	 */
+	public void setUniform(String uniformName, float[] value) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+		int expectedArgs = GLTypes.typeSize(type);
+
+		if (value.length != expectedArgs) {
+			throw new IllegalArgumentException(
+					String.format("Expected %s got float[%d]", GLTypes.typeName(type), value.length));
+		}
+
+		switch (type) {
+		case GL_FLOAT:
+			glUniform1f(uniform, value[0]);
+			break;
+		case GL_FLOAT_VEC2:
+			glUniform2f(uniform, value[0], value[1]);
+			break;
+		case GL_FLOAT_VEC3:
+			glUniform3f(uniform, value[0], value[1], value[2]);
+			break;
+		case GL_FLOAT_VEC4:
+			glUniform4f(uniform, value[0], value[1], value[2], value[3]);
+			break;
+		case GL_FLOAT_MAT2:
+			glUniformMatrix2fv(uniform, false, value);
+			break;
+		case GL_FLOAT_MAT3:
+			glUniformMatrix3fv(uniform, false, value);
+			break;
+		case GL_FLOAT_MAT4:
+			glUniformMatrix4fv(uniform, false, value);
+			break;
+		default:
+			throw new IllegalArgumentException(
+					String.format("Cannot convert float array to %s", GLTypes.typeName(type)));
+
+		}
+
+	}
+
+	/**
+	 * Set a uniform of type vec2 to a Vector2f value
+	 * 
+	 * @param uniformName the uniform to set
+	 * @param vector      the vector value to send
+	 */
+
+	public void setUniform(String uniformName, Vector2f vector) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_VEC2) {
+			throw new IllegalArgumentException(String.format("Expected %s got Vector2f", GLTypes.typeName(type)));
+		}
+
+		glUniform2fv(uniform, vector.get(vector2Buffer));
+	}
+
+	/**
+	 * Set a uniform of type vec3 to a Vector3f value
+	 * 
+	 * @param uniformName the uniform to set
+	 * @param vector      the vector value to send
+	 */
+
+	public void setUniform(String uniformName, Vector3f vector) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_VEC3) {
+			throw new IllegalArgumentException(String.format("Expected %s got Vector3f", GLTypes.typeName(type)));
+		}
+
+		glUniform3fv(uniform, vector.get(vector3Buffer));
+	}
+
+	/**
+	 * Set a uniform of type vec4 to a Vector4f value
+	 * 
+	 * @param uniformName the uniform to set
+	 * @param vector      the vector value to send
+	 */
+
+	public void setUniform(String uniformName, Vector4f vector) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_VEC4) {
+			throw new IllegalArgumentException(String.format("Expected %s got Vector4f", GLTypes.typeName(type)));
+		}
+
+		glUniform4fv(uniform, vector.get(vector4Buffer));
+	}
+
+	/**
+	 * Set a uniform of type mat2 to a Matrix2f value
+	 * 
+	 * @param uniformName the uniform to set
+	 * @param matrix      the matrix value to send
+	 */
+
+	public void setUniform(String uniformName, Matrix2f matrix) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_MAT2) {
+			throw new IllegalArgumentException(String.format("Expected %s got Matrix2f", GLTypes.typeName(type)));
+		}
+
+		glUniformMatrix2fv(uniform, false, matrix.get(matrix2Buffer));
+	}
+
+	/**
+	 * Set a uniform of type mat3 to a Matrix3f value
+	 * 
+	 * @param uniformName the uniform to set
+	 * @param matrix      the matrix value to send
+	 */
+
+	public void setUniform(String uniformName, Matrix3f matrix) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_MAT3) {
+			throw new IllegalArgumentException(String.format("Expected %s got Matrix3f", GLTypes.typeName(type)));
+		}
+
+		glUniformMatrix3fv(uniform, false, matrix.get(matrix3Buffer));
+	}
+
+	/**
+	 * Set a uniform of type mat4 to a Matrix4 value
+	 * 
+	 * @param uniformName the uniform to set
+	 * @param matrix      the matrix value to send
+	 */
+
+	public void setUniform(String uniformName, Matrix4f matrix) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_MAT4) {
+			throw new IllegalArgumentException(String.format("Expected %s got Matrix4f", GLTypes.typeName(type)));
+		}
+
+		glUniformMatrix4fv(uniform, false, matrix.get(matrix4Buffer));
+	}
+
 	/**
 	 * Turn a shader type constant into a descriptive string.
 	 * 
