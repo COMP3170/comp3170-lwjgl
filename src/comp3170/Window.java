@@ -72,7 +72,13 @@ public class Window {
 		this.resizable = resizable;
 		this.preferredWidth = width;
 		this.preferredHeight = height;
-		this.windowListener = null;
+		
+		if (windowListener == null) {
+			throw new NullPointerException("Window listener must be non-null");
+		}
+		
+		this.windowListener = windowListener;
+
 	}
 
 	/**
