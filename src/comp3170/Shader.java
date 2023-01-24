@@ -23,7 +23,7 @@ public class Shader {
 	private HashMap<String, Integer> uniformTypes;
 	private HashMap<String, Boolean> trackedUniformErrors;
 
-	public Shader(File vertexShaderFile, File fragmentShaderFile) throws IOException, GLException {
+	public Shader(File vertexShaderFile, File fragmentShaderFile) throws IOException, GLError {
 
 		if (vertexShaderFile == null || fragmentShaderFile == null) {
 			throw new NullPointerException("Shader files must be non-null.");
@@ -85,14 +85,14 @@ public class Shader {
 		return source.toArray(lines);
 	}
 
-	private static int compileShader(int type, File sourceFile) throws IOException, GLException {
+	private static int compileShader(int type, File sourceFile) throws IOException, GLError {
 		String[] source = readSource(sourceFile);
 
 		int shader = glCreateShader(type);
-		GLException.checkGLErrors();
+		GLError.checkGLErrors();
 		glShaderSource(shader, source);
 		glCompileShader(shader);
-		GLException.checkGLErrors();	
+		GLError.checkGLErrors();	
 
 		// check compilation
 
@@ -107,18 +107,18 @@ public class Shader {
 
 			String message = String.format("%s: %s compilation error\n%s", sourceFile.getName(), shaderType(type),
 					logString);
-			throw new GLException(message);
+			throw new GLError(message);
 		}
 
 		return shader;
 	}
 
-	private static int linkShaders(int vertexShader, int fragmentShader) throws GLException {
+	private static int linkShaders(int vertexShader, int fragmentShader) throws GLError {
 		int program = glCreateProgram();
 		glAttachShader(program, vertexShader);
 		glAttachShader(program, fragmentShader);
 		glLinkProgram(program);
-		GLException.checkGLErrors();
+		GLError.checkGLErrors();
 
 		// check for linker errors
 
@@ -128,7 +128,7 @@ public class Shader {
 			int len = glGetProgrami(program, GL_INFO_LOG_LENGTH);
 			String err = glGetProgramInfoLog(program, len);
 			String message = String.format("Link failed: %s\n", err);
-			throw new GLException(message);
+			throw new GLError(message);
 		}
 
 		return program;

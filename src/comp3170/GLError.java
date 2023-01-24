@@ -1,16 +1,14 @@
 package comp3170;
 
-import org.lwjgl.opengl.GL;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
-
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.glGetError;
 
 @SuppressWarnings("serial")
-public class GLException extends Exception {
+public class GLError extends Exception {
 
 	private int glError;
 	
-	public GLException(int glError, GLException suppressed) {
+	public GLError(int glError, GLError suppressed) {
 		super(String.format("GLError: %d\n", glError));	// TODO: Show error message
 		this.glError = glError;
 		if (suppressed != null) {
@@ -18,7 +16,7 @@ public class GLException extends Exception {
 		}
 	}
 	
-	public GLException(String message) {
+	public GLError(String message) {
 		super(message);
 		this.glError = 0;
 	}
@@ -27,14 +25,14 @@ public class GLException extends Exception {
 		return this.glError;
 	}
 
-	public static void checkGLErrors() throws GLException  {
+	public static void checkGLErrors() throws GLError  {
 		
-		GLException e = null;
+		GLError e = null;
 		
 		int error = glGetError();
 
 		while (error != GL_NO_ERROR) {
-			e = new GLException(error, e);
+			e = new GLError(error, e);
 			error = glGetError();
 		}
 		

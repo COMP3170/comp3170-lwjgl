@@ -110,13 +110,13 @@ public class Window {
 		this.windowListener = windowListener;
 	}
 	
-	public void run() throws GLException {
+	public void run() throws GLError {
 		init();
 		loop();
 		close();
 	}
 
-	private void init() throws GLException {
+	private void init() throws GLError {
 		// Setup an error callback. The default implementation
 		// will print the error message in System.err.
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -188,7 +188,7 @@ public class Window {
 		GLCapabilities capabilities = GL.createCapabilities();
 		
 		if (!capabilities.OpenGL41) {
-			throw new GLException("OpenGL 4.1 is not supported");
+			throw new GLError("OpenGL 4.1 is not supported");
 		}
 		
 	}
