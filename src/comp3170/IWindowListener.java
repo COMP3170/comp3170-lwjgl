@@ -21,12 +21,13 @@ public interface IWindowListener {
 	 * Reshape the canvas. Called when the window has been resized.
 	 */
 
-	public void reshape();
+	public void reshape(int width, int height);
 	
 	/**
 	 * Close the scene. Called when the window is closed.
 	 */
 
 	public void close();
+
 
 }
