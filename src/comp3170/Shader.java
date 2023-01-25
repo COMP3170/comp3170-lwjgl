@@ -1,6 +1,8 @@
 package comp3170;
 
 import static org.lwjgl.BufferUtils.createFloatBuffer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.system.MemoryStack.*;
 
@@ -70,6 +72,12 @@ public class Shader {
 		glDetachShader(this.program, fragmentShader);
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
+		
+		// generate VAO (not used)
+		// this is needed to make anything show on screen
+	 	
+		int vao = glGenVertexArrays();
+		glBindVertexArray(vao);
 
 		// record attribute and uniforms
 
