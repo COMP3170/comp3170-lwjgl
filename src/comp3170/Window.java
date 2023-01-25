@@ -200,7 +200,7 @@ public class Window {
 		// bindings available for use.
 		GLCapabilities capabilities = GL.createCapabilities();
 
-		windowListener.init(capabilities);
+		windowListener.init();
 
 		// send an initial resize event, since the framebuffer might not be the 
 		// same size as the window (particularly on Macs with retina display)

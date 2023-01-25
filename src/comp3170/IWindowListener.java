@@ -1,15 +1,12 @@
 package comp3170;
 
-import org.lwjgl.opengl.GLCapabilities;
-
 public interface IWindowListener {
 
 	/**
 	 * Initialise the scene. Called once when the Window is first created
-	 * @param capabilities The capabilities for the current GL implementation
 	 */
 	
-	public void init(GLCapabilities capabilities);
+	public void init();
 
 	/**
 	 * Draw the scene. Called once every frame.
