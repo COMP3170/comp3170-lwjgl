@@ -1,9 +1,19 @@
 package comp3170;
 
-import static org.lwjgl.BufferUtils.createIntBuffer;
 import static org.lwjgl.BufferUtils.createFloatBuffer;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.BufferUtils.createIntBuffer;
+import static org.lwjgl.opengl.GL11.GL_INT;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_MAT3;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_MAT4;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC2;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC3;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC4;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -15,7 +25,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.lwjgl.system.MemoryStack;
 
 /**
  * Version 2023.1
@@ -71,7 +80,6 @@ public class GLBuffers {
 	 */
 	
 	static public int createBuffer(float[] data, int type) {
-		MemoryStack stack = stackPush();
 		int bufferID = glGenBuffers();
 
 		FloatBuffer floatBuffer = createFloatBuffer(data.length);
@@ -100,7 +108,6 @@ public class GLBuffers {
 	 * @return	The OpenGL handle to the VBO
 	 */
 	static public int createBuffer(FloatBuffer floatBuffer, int type) {
-		MemoryStack stack = stackPush();
 		int bufferID = glGenBuffers();
 
 		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
