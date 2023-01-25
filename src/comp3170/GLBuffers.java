@@ -82,40 +82,12 @@ public class GLBuffers {
 	static public int createBuffer(float[] data, int type) {
 		int bufferID = glGenBuffers();
 
-		FloatBuffer floatBuffer = createFloatBuffer(data.length);
-		floatBuffer.put(data);
-
 		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-		glBufferData(GL_ARRAY_BUFFER, floatBuffer, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
 
 		bufferTypes.put(bufferID, type);
 
 		if (data.length % GLTypes.typeSize(type) != 0) {
-			System.err.println(
-					String.format("Warning: buffer of type %s has length which is not a mutliple of %d.",
-					GLTypes.typeName(type), GLTypes.typeSize(type)));
-		}
-
-		return bufferID;
-	}
-
-	/**
-	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
-	 * it from a FloatBuffer
-	 * 
-	 * @param floatBuffer A FloatBuffer containing the data
-	 * @param type The type of data in this buffer
-	 * @return	The OpenGL handle to the VBO
-	 */
-	static public int createBuffer(FloatBuffer floatBuffer, int type) {
-		int bufferID = glGenBuffers();
-
-		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-		glBufferData(GL_ARRAY_BUFFER, floatBuffer, GL_STATIC_DRAW);
-
-		bufferTypes.put(bufferID, type);
-
-		if (floatBuffer.limit() % GLTypes.typeSize(type) != 0) {
 			System.err.println(
 					String.format("Warning: buffer of type %s has length which is not a mutliple of %d.",
 					GLTypes.typeName(type), GLTypes.typeSize(type)));
