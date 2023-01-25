@@ -49,7 +49,7 @@ public class Shader {
 	private FloatBuffer vector3Buffer = createFloatBuffer(3);
 	private FloatBuffer vector4Buffer = createFloatBuffer(4);
 
-	public Shader(File vertexShaderFile, File fragmentShaderFile) throws IOException, GLError {
+	public Shader(File vertexShaderFile, File fragmentShaderFile) throws IOException, OpenGLException {
 
 		if (vertexShaderFile == null || fragmentShaderFile == null) {
 			throw new NullPointerException("Shader files must be non-null.");
@@ -142,14 +142,12 @@ public class Shader {
 		return source.toArray(lines);
 	}
 
-	private static int compileShader(int type, File sourceFile) throws IOException, GLError {
+	private static int compileShader(int type, File sourceFile) throws IOException, OpenGLException {
 		String[] source = readSource(sourceFile);
 
 		int shader = glCreateShader(type);
-		GLError.checkGLErrors();
 		glShaderSource(shader, source);
 		glCompileShader(shader);
-		GLError.checkGLErrors();
 
 		// check compilation
 
@@ -164,18 +162,17 @@ public class Shader {
 
 			String message = String.format("%s: %s compilation error\n%s", sourceFile.getName(), shaderType(type),
 					logString);
-			throw new GLError(message);
+			throw new OpenGLException(message);
 		}
 
 		return shader;
 	}
 
-	private static int linkShaders(int vertexShader, int fragmentShader) throws GLError {
+	private static int linkShaders(int vertexShader, int fragmentShader) throws OpenGLException {
 		int program = glCreateProgram();
 		glAttachShader(program, vertexShader);
 		glAttachShader(program, fragmentShader);
 		glLinkProgram(program);
-		GLError.checkGLErrors();
 
 		// check for linker errors
 
@@ -185,7 +182,7 @@ public class Shader {
 			int len = glGetProgrami(program, GL_INFO_LOG_LENGTH);
 			String err = glGetProgramInfoLog(program, len);
 			String message = String.format("Link failed: %s\n", err);
-			throw new GLError(message);
+			throw new OpenGLException(message);
 		}
 
 		return program;
@@ -210,15 +207,17 @@ public class Shader {
 		// Use stack buffers for "any small buffer/struct allocation that is
 		// shortly-lived"
 		// https://blog.lwjorg/memory-management-in-lwjgl-3/
-		MemoryStack stack = stackPush();
-		IntBuffer sizeBuffer = stack.mallocInt(1);
-		IntBuffer typeBuffer = stack.mallocInt(1);
 
-		for (int i = 0; i < activeAttributes; ++i) {
-			String name = glGetActiveAttrib(program, i, maxNameSize, sizeBuffer, typeBuffer);
+		try (MemoryStack stack = stackPush()) {
+			IntBuffer sizeBuffer = stack.mallocInt(1);
+			IntBuffer typeBuffer = stack.mallocInt(1);
 
-			attributes.put(name, glGetAttribLocation(program, name));
-			attributeTypes.put(name, typeBuffer.get(0));
+			for (int i = 0; i < activeAttributes; ++i) {
+				String name = glGetActiveAttrib(program, i, maxNameSize, sizeBuffer, typeBuffer);
+
+				attributes.put(name, glGetAttribLocation(program, name));
+				attributeTypes.put(name, typeBuffer.get(0));
+			}
 		}
 	}
 
@@ -239,15 +238,16 @@ public class Shader {
 		// Use stack buffers for "any small buffer/struct allocation that is
 		// shortly-lived"
 		// https://blog.lwjorg/memory-management-in-lwjgl-3/
-		MemoryStack stack = stackPush();
-		IntBuffer sizeBuffer = stack.mallocInt(1);
-		IntBuffer typeBuffer = stack.mallocInt(1);
+		try (MemoryStack stack = stackPush()) {
+			IntBuffer sizeBuffer = stack.mallocInt(1);
+			IntBuffer typeBuffer = stack.mallocInt(1);
 
-		for (int i = 0; i < activeUniforms; ++i) {
-			String name = glGetActiveUniform(program, i, maxNameSize, sizeBuffer, typeBuffer);
+			for (int i = 0; i < activeUniforms; ++i) {
+				String name = glGetActiveUniform(program, i, maxNameSize, sizeBuffer, typeBuffer);
 
-			uniforms.put(name, glGetUniformLocation(program, name));
-			uniformTypes.put(name, typeBuffer.get(0));
+				uniforms.put(name, glGetUniformLocation(program, name));
+				uniformTypes.put(name, typeBuffer.get(0));
+			}
 		}
 	}
 
