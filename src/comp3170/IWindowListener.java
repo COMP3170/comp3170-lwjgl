@@ -18,10 +18,12 @@ public interface IWindowListener {
 	public void draw();
 
 	/**
-	 * Reshape the canvas. Called when the window has been resized.
+	 * Resize the canvas. Called when the window has been resized.
+	 * 
+	 * @param width	Canvas width in pixels
+	 * @param height Canvas height in pixels
 	 */
-
-	public void reshape(int width, int height);
+	public void resize(int width, int height);
 	
 	/**
 	 * Close the scene. Called when the window is closed.
