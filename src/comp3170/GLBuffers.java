@@ -201,11 +201,8 @@ public class GLBuffers {
 	static public int createIndexBuffer(int[] indices) {
 		int bufferID = glGenBuffers();
 
-		IntBuffer intBuffer = createIntBuffer(indices.length);
-		intBuffer.put(indices);
-
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, intBuffer, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
 		bufferTypes.put(bufferID, GL_INT);
 
