@@ -88,7 +88,7 @@ The new constructor is much simpler, just create a window and run it.
 
 * The event methods are now called init(), draw(), resize() and close()
 * The event methods no longer take a GLAutoDrawable parameter
-* There is no need to have a GL object any more
+* There is no need to have a GL object to access methods or constants
 
 **Old:**
 
@@ -103,14 +103,14 @@ The new constructor is much simpler, just create a window and run it.
       @Override
       public void draw(GLAutoDrawable arg0) {
           glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-          glClear(GL.GL_COLOR_BUFFER_BIT);
+          glClear(GL_COLOR_BUFFER_BIT);
 
 ### Resize 
 
 * The method signature for resize has changed. 
 * Resize is always called once when the window is first created
 
-**Note:** on Macs with retina display, the window size does not match the canvas size, so you should always implement a basic resize method.
+**Note:** on Macs with retina display, the window size does not match the canvas size, so you should always implement a basic resize method, even if the window isn't resizable.
 
 **Old:**
 
