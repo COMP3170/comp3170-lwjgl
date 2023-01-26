@@ -19,7 +19,7 @@ In Eclipse, this can be done in Run > Run configurations > Arguments > VM argume
 **New:**
 
     import org.lwjgl.opengl.GLCapabilities;
-    import static org.lwjgl.opengl.GL20.*;
+    import static org.lwjgl.opengl.GL41.*;
 
 The new library classes have slightly diiferent names:
 
