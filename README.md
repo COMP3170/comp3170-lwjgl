@@ -47,6 +47,8 @@ The new library classes have slightly diiferent names:
 
 **New**
 
+    public class Week2 implements IWindowListener {
+
 ## Constructor
 
 The new constructor is much simpler, just create a window and run it.
