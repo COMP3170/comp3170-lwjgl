@@ -2,8 +2,11 @@
 
 ## General 
 
-*Note:* Running LWJGL code on a Mac requires you to add the command line argument -XstartOnFirstThread to the JVM. 
+**Notes:**
+* All code in this unit should be written in OpenGL 4.1. Apple does not support newer versions of OpenGL for Macs.
+* Running LWJGL code on a Mac requires you to add the command line argument -XstartOnFirstThread to the JVM. 
 In Eclipse, this can be done in Run > Run configurations > Arguments > VM arguments
+
 
 ## Imports 
 
