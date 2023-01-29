@@ -52,7 +52,7 @@ import org.lwjgl.system.MemoryStack;
 
 public class Window {
 
-	// This code assumes OpenGL 4.1
+	// This code assumes OpenGL 4.1 (later versions are not supported by Apple)
 	private final static int MAJOR_VERSION = 4;
 	private final static int MINOR_VERSION = 1;
 
@@ -183,12 +183,6 @@ public class Window {
 
 		// Make the window visible
 		glfwShowWindow(window);
-
-		GLCapabilities capabilities = GL.createCapabilities();
-
-		if (!capabilities.OpenGL41) {
-			throw new OpenGLException("OpenGL 4.1 is not supported");
-		}
 
 	}
 
