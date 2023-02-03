@@ -35,6 +35,7 @@ The new library classes have slightly diiferent names:
 **New:**
 
     import comp3170.GLBuffers;
+    import comp3170.OpenGLException;
     import comp3170.IWindowListener;
     import comp3170.Shader;
     import comp3170.Window;
@@ -104,7 +105,7 @@ The new constructor is much simpler, just create a window and run it.
 **New:**
 
       @Override
-      public void draw(GLAutoDrawable arg0) {
+      public void draw() {
           glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
           glClear(GL_COLOR_BUFFER_BIT);
 
