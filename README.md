@@ -154,7 +154,7 @@ The new InputManager class has the same interface as the old one. The only diffe
 
 **New:**
 
-    private Window winodw;
+    private Window window;
     private InputManager input;
 
     public Demo() {
