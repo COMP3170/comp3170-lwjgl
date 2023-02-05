@@ -143,13 +143,13 @@ The new InputManager class has the same interface as the old one. The only diffe
 
     public Demo() {
         GLProfile profile = GLProfile.get(GLProfile.GL4);		 
-		GLCapabilities capabilities = new GLCapabilities(profile);
-		canvas = new GLCanvas(capabilities);
-		canvas.addGLEventListener(this);
-		add(canvas);
+        GLCapabilities capabilities = new GLCapabilities(profile);
+        canvas = new GLCanvas(capabilities);
+        canvas.addGLEventListener(this);
+        add(canvas);
 		
-		// set up Input manager
-		input = new InputManager(canvas);
+        // set up Input manager
+        input = new InputManager(canvas);
     }
 
 **New:**
@@ -158,16 +158,13 @@ The new InputManager class has the same interface as the old one. The only diffe
     private InputManager input;
 
     public Demo() {
-		window = new Window("Assignment 3", width, height, true, this);
-		window.run();		
+        window = new Window("Assignment 3", width, height, true, this);
+        window.run();		
     }
 
     public void init() {
-    
-  		// set up Input manager
-		input = new InputManager(canvas);
-        
-        // ... etc
+        // set up Input manager
+        input = new InputManager(canvas);        
     }
 
 
