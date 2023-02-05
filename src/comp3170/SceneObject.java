@@ -96,6 +96,16 @@ public class SceneObject {
 	}	
 
 	/**
+	 * Write a copy of the model->parent matrix into the given matrix
+	 * @param dest A preallocated destination matrix
+	 * @return	The model matrix
+	 */
+	public Matrix4f getMatrix(Matrix4f dest)
+	{
+		return dest.set(modelToParentMatrix);
+	}	
+	
+	/**
 	 * Get the model->world matrix
 	 * @param dest	 a matrix to write the result into
 	 */
