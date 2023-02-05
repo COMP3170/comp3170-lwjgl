@@ -13,6 +13,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
+import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
@@ -20,6 +22,9 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -27,16 +32,17 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
+import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
@@ -204,7 +210,7 @@ public class Window {
 			IntBuffer height = stack.mallocInt(1); // int*
 
 			glfwGetFramebufferSize(window, width, height);
-			windowListener.resize(width.get(0), height.get(0));
+			windowListener.resize(width.get(), height.get());
 		}
 		
 
@@ -233,4 +239,46 @@ public class Window {
 		glfwSetErrorCallback(null).free();
 	}
 
+	/**
+	 * Add a listener to listen to key and mouse events in the window.
+	 * 
+	 * @param listener
+	 */
+	
+	public void setInputListener(IWindowInputListener listener) {
+		glfwSetKeyCallback(window, new GLFWKeyCallbackI() {
+			@Override
+			public void invoke(long window, int key, int scancode, int action, int mods) {
+				listener.keyEvent(key, action, mods);			
+			}			
+		});
+
+		glfwSetMouseButtonCallback(window, new GLFWMouseButtonCallbackI() {
+			@Override
+			public void invoke(long window, int button, int action, int mods) {
+				listener.mouseButtonEvent(button, action, mods);			
+			}
+		});
+	}
+	
+	/**
+	 * Returns the position of the cursor, in screen coordinates, 
+	 * relative to the upper-left corner of the content area of the window.
+	 * 
+	 * @param dest	A pre-allocated Vector2f into which to write the result 
+	 * @return
+	 */
+	
+	public Vector2f getCursorPos(Vector2f dest) {
+		try (MemoryStack stack = stackPush()) {
+			DoubleBuffer x = stack.mallocDouble(1); // int*
+			DoubleBuffer y = stack.mallocDouble(1); // int*
+
+			glfwGetCursorPos(window, x, y);
+			dest.set(x.get(), y.get());
+		}
+		
+		return dest;
+	}
+	
 }
