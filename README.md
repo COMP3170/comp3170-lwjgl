@@ -158,7 +158,7 @@ The new InputManager class has the same interface as the old one. The only diffe
     private InputManager input;
 
     public Demo() {
-        window = new Window("Assignment 3", width, height, true, this);
+        window = new Window("Demo", width, height, true, this);
         window.run();		
     }
 
