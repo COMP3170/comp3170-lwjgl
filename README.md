@@ -132,6 +132,44 @@ The new constructor is much simpler, just create a window and run it.
         this.height = height;
     }
 
+### Input
+
+The new InputManager class has the same interface as the old one. The only difference is that you need to create the InputManager in init() rather than in the main constructor, as the window has to be initialised before the InputManager can be attached.
+
+**Old:**
+
+	private GLCanvas canvas;
+	private InputManager input;
+
+    public Demo() {
+        GLProfile profile = GLProfile.get(GLProfile.GL4);		 
+		GLCapabilities capabilities = new GLCapabilities(profile);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
+		
+		// set up Input manager
+		input = new InputManager(canvas);
+    }
+
+**New:**
+
+    private Window winodw;
+    private InputManager input;
+
+    public Demo() {
+		window = new Window("Assignment 3", width, height, true, this);
+		window.run();		
+    }
+
+    public void init() {
+    
+  		// set up Input manager
+		input = new InputManager(canvas);
+        
+        // ... etc
+    }
+
 
 
 
