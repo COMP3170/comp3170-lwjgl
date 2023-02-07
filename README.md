@@ -167,7 +167,7 @@ The new InputManager class has the same interface as the old one. The only diffe
         input = new InputManager(canvas);        
     }
 
-The new InputSystem uses GLFW keycodes rather than Java KeyEvent keycodes.
+The new InputSystem uses [GLFW keycodes](https://www.glfw.org/docs/3.3/group__keys.html) rather than Java KeyEvent keycodes.
 
 **Old:**
 
