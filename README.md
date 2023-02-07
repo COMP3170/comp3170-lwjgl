@@ -167,6 +167,17 @@ The new InputManager class has the same interface as the old one. The only diffe
         input = new InputManager(canvas);        
     }
 
+The new InputSystem uses GLFW keycodes rather than Java KeyEvent keycodes.
+
+**Old:**
+    if (input.isKeyDown(KeyEvent.VK_LEFT)) {
+        cameraAngle = (cameraAngle + CAMERA_ROTATION_SPEED * deltaTime) % TAU;			
+    }
+
+**New:**
+    if (input.isKeyDown(GLFW_KEY_LEFT)) {
+        cameraAngle = (cameraAngle + CAMERA_ROTATION_SPEED * deltaTime) % TAU;			
+    }
 
 
 
