@@ -3,11 +3,13 @@ package comp3170;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
+import static org.lwjgl.glfw.GLFW.GLFW_DOUBLEBUFFER;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
@@ -67,10 +69,13 @@ public class Window {
 	private long window;
 	private int preferredWidth;
 	private int preferredHeight;
-	private boolean resizable = false;
-	private boolean fullScreen = false;
 
 	private IWindowListener windowListener;
+
+	private boolean isResizable = false;
+	private boolean isFullScreen = false;
+	private boolean isDoubleBuffered = true;
+	private int samples = 0; 
 
 	/**
 	 * Create a window.
@@ -80,9 +85,8 @@ public class Window {
 	 * @param height    The desired height of the window (in pixels)
 	 * @param resizable Whether the window should be resizable.
 	 */
-	public Window(String title, int width, int height, boolean resizable, IWindowListener windowListener) {
+	public Window(String title, int width, int height, IWindowListener windowListener) {
 		this.title = title;
-		this.resizable = resizable;
 		this.preferredWidth = width;
 		this.preferredHeight = height;
 
@@ -95,28 +99,47 @@ public class Window {
 	}
 
 	/**
-	 * Create a non-resizable window.
+	 * Set whether the window is full screen (default false)
 	 * 
-	 * @param title  The window title.
-	 * @param width  The desired width of the window (in pixels)
-	 * @param height The desired height of the window (in pixels)
+	 * This must be called before running the window. 
 	 */
-	public Window(String title, int width, int height, IWindowListener windowListener) {
-		this(title, width, height, false, windowListener);
+	
+	public void setFullScreen(boolean fullScreen) {
+		isFullScreen = fullScreen;
 	}
 
 	/**
-	 * Create a fullscreen window.
+	 * Set whether the window is resizable (default false)
 	 * 
-	 * @param title The window title.
+	 * This must be called before running the window. 
 	 */
-	public Window(String title, IWindowListener windowListener) {
-		this.title = title;
-		this.resizable = false;
-		this.fullScreen = true;
-		this.windowListener = windowListener;
+	
+	public void setResizable(boolean resizable) {
+		isResizable = resizable;
 	}
 
+	/**
+	 * Set whether the window is double-buffered (default true)
+	 * 
+	 * This must be called before running the window. 
+	 */
+	
+	public void setDoubleBuffered(boolean doubleBuffered) {
+		isDoubleBuffered = doubleBuffered;
+	}
+
+	/**
+	 * Set multisampling rate.
+	 * samples = 0 disables multisampling (default).
+	 * 
+	 * This must be called before running the window. 
+	 */
+	
+	public void setSamples(int samples) {
+		this.samples = samples;
+	}
+
+	
 	public void run() throws OpenGLException {
 		init();
 		loop();
@@ -143,12 +166,16 @@ public class Window {
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE); // remove deprecated content
 
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
-		glfwWindowHint(GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE); // whether the window will be resizable
+		glfwWindowHint(GLFW_RESIZABLE, isResizable ? GLFW_TRUE : GLFW_FALSE); // whether the window will be resizable
 
+		// configure the framebuffer
+		glfwWindowHint(GLFW_SAMPLES, samples);
+		glfwWindowHint(GLFW_DOUBLEBUFFER, isDoubleBuffered ? GLFW_TRUE : GLFW_FALSE);
+		
 		// Get the monitor if full screen
 
 		long monitor = NULL;
-		if (fullScreen) {
+		if (isFullScreen) {
 			monitor = glfwGetPrimaryMonitor();
 		}
 
@@ -217,13 +244,10 @@ public class Window {
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
 		while (!glfwWindowShouldClose(window)) {
-			windowListener.draw();
+			windowListener.draw();		// redraw
+			glfwSwapBuffers(window);	// swap the color buffers
+			glfwPollEvents();			// poll for window events
 
-			glfwSwapBuffers(window); // swap the color buffers
-
-			// Poll for window events. The key callback above will only be
-			// invoked during this call.
-			glfwPollEvents();
 		}
 	}
 
