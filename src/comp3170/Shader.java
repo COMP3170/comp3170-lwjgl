@@ -343,10 +343,21 @@ public class Shader {
 		int elementType = GLTypes.elementType(type);
 
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		glVertexAttribPointer(attribute, size, elementType, false, 0, 0);
+		if (size <= 4) {
+			glVertexAttribPointer(attribute, size, elementType, false, 0, 0);			
+		}
+		else {
+			// mat3 = 3 x vec3, mat4 = 4 x vec4
+			int stride = GLTypes.stride(type);
+			int n = (size-1) / stride;
+			for (int i = 0; i < n; i++) {
+				glVertexAttribPointer(attribute+i, stride, elementType, false, stride, 0);							
+			}
+		}
 		glEnableVertexAttribArray(attribute);
 	}
 
+	
 	/**
 	 * Set the value of a uniform to a boolean
 	 * 
