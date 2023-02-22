@@ -1,13 +1,12 @@
 package comp3170;
 
-import static org.lwjgl.BufferUtils.createFloatBuffer;
-import static org.lwjgl.BufferUtils.createIntBuffer;
 import static org.lwjgl.opengl.GL11.GL_INT;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_MAT3;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_MAT4;
@@ -16,7 +15,6 @@ import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC3;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC4;
 
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +23,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.BufferUtils;
 
 /**
  * Version 2023.1
@@ -100,19 +99,43 @@ public class GLBuffers {
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
 	 * it
 	 * 
+	 * @param data The data as a FloatBuffer
+	 * @param type The type of data in this buffer
+	 * @return	The OpenGL handle to the VBO
+	 */
+	
+	static public int createBuffer(FloatBuffer data, int type) {
+		int bufferID = glGenBuffers();
+
+		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
+		glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
+
+		bufferTypes.put(bufferID, type);
+
+		if (data.capacity() % GLTypes.typeSize(type) != 0) {
+			System.err.println(
+					String.format("Warning: buffer of type %s has length which is not a mutliple of %d.",
+					GLTypes.typeName(type), GLTypes.typeSize(type)));
+		}
+
+		return bufferID;
+	}
+	
+	/**
+	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
+	 * it
+	 * 
 	 * @param data The data as an array of Vector2f
 	 * @return	The OpenGL handle to the VBO
 	 */
 	static public int createBuffer(Vector2f[] data) {
-		// this is a hack, but I can't get it to work otherwise
-		float[] array = new float[2 * data.length];
-		int j = 0;
+		FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(2 * data.length);
+		
 		for (int i = 0; i < data.length; i++) {
-			array[j++] = data[i].x;
-			array[j++] = data[i].y;
+			data[i].get(i*2, floatBuffer);
 		}
-
-		return createBuffer(array, GL_FLOAT_VEC2);
+		
+		return createBuffer(floatBuffer, GL_FLOAT_VEC2);
 	}
 
 	/**
@@ -123,16 +146,13 @@ public class GLBuffers {
 	 * @return	The OpenGL handle to the VBO
 	 */
 	static public int createBuffer(Vector3f[] data) {
-		// this is a hack, but I can't get it to work otherwise
-		float[] array = new float[3 * data.length];
-		int j = 0;
+		FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(3 * data.length);
+
 		for (int i = 0; i < data.length; i++) {
-			array[j++] = data[i].x;
-			array[j++] = data[i].y;
-			array[j++] = data[i].z;
+			data[i].get(i*3, floatBuffer);
 		}
 
-		return createBuffer(array, GL_FLOAT_VEC3);
+		return createBuffer(floatBuffer, GL_FLOAT_VEC3);
 	}
 
 	/**
@@ -143,17 +163,13 @@ public class GLBuffers {
 	 * @return	The OpenGL handle to the VBO
 	 */
 	static public int createBuffer(Vector4f[] data) {
-		// this is a hack, but I can't get it to work otherwise
-		float[] array = new float[4 * data.length];
-		int j = 0;
+		FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(4 * data.length);
+
 		for (int i = 0; i < data.length; i++) {
-			array[j++] = data[i].x;
-			array[j++] = data[i].y;
-			array[j++] = data[i].z;
-			array[j++] = data[i].w;
+			data[i].get(i*4, floatBuffer);
 		}
 
-		return createBuffer(array, GL_FLOAT_VEC4);
+		return createBuffer(floatBuffer, GL_FLOAT_VEC4);
 	}
 
 	/**
@@ -164,7 +180,6 @@ public class GLBuffers {
 	 * @return	The OpenGL handle to the VBO
 	 */
 	static public int createBuffer(Matrix3f[] data) {
-		// this is a hack, but I can't get it to work otherwise
 		float[] array = new float[9 * data.length];
 		
 		for (int i = 0; i < data.length; i++) {
@@ -208,5 +223,7 @@ public class GLBuffers {
 
 		return bufferID;
 	}
-	
+
+
+
 }
