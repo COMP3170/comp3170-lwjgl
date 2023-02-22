@@ -224,6 +224,99 @@ public class GLBuffers {
 		return bufferID;
 	}
 
+	/**
+	 * Update the contents of a VBO
+	 * 
+	 * @param buffer The OpenGL handle to the VBO
+	 * @param type The type of data in this buffer
+	 * @return	The OpenGL handle to the VBO
+	 */
+	
+	static public void updateBuffer(int buffer, float[] data, int type) {
+		GLBuffers.checkType(buffer, type);
 
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, data);
+
+		if (data.length % GLTypes.typeSize(type) != 0) {
+			System.err.println(
+					String.format("Warning: buffer of type %s has length which is not a mutliple of %d.",
+					GLTypes.typeName(type), GLTypes.typeSize(type)));
+		}
+
+	}
+
+	/**
+	 * Update the contents of a VBO
+	 * 
+	 * @param buffer The OpenGL handle to the VBO
+	 * @param type The type of data in this buffer
+	 * @return	The OpenGL handle to the VBO
+	 */
+	
+	static public void updateBuffer(int buffer, FloatBuffer data, int type) {
+		GLBuffers.checkType(buffer, type);
+
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, data);
+
+		if (data.capacity() % GLTypes.typeSize(type) != 0) {
+			System.err.println(
+					String.format("Warning: buffer of type %s has length which is not a mutliple of %d.",
+					GLTypes.typeName(type), GLTypes.typeSize(type)));
+		}
+
+	}
+	
+	/**
+	 * Update the contents of a VBO
+	 * 
+	 * @param buffer The OpenGL handle to the VBO
+	 * @param data The data as an array of Vector2f
+	 */
+	static public void updateBuffer(int buffer, Vector2f[] data) {
+		int size = 2;
+		FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(size * data.length);
+		
+		for (int i = 0; i < data.length; i++) {
+			data[i].get(i*size, floatBuffer);
+		}
+		
+		updateBuffer(buffer, floatBuffer, GL_FLOAT_VEC2);
+	}
+
+	/**
+	 * Update the contents of a VBO
+	 * 
+	 * @param buffer The OpenGL handle to the VBO
+	 * @param data The data as an array of Vector3f
+	 */
+	static public void updateBuffer(int buffer, Vector3f[] data) {
+		int size = 3;
+		FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(size * data.length);
+		
+		for (int i = 0; i < data.length; i++) {
+			data[i].get(i*size, floatBuffer);
+		}
+		
+		updateBuffer(buffer, floatBuffer, GL_FLOAT_VEC3);
+	}
+
+	/**
+	 * Update the contents of a VBO
+	 * 
+	 * @param buffer The OpenGL handle to the VBO
+	 * @param data The data as an array of Vector4f
+	 */
+	static public void updateBuffer(int buffer, Vector4f[] data) {
+		int size = 4;
+		FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(size * data.length);
+		
+		for (int i = 0; i < data.length; i++) {
+			data[i].get(i*size, floatBuffer);
+		}
+		
+		updateBuffer(buffer, floatBuffer, GL_FLOAT_VEC4);
+	}
 
 }
