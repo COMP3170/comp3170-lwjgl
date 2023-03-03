@@ -188,6 +188,7 @@ There is no longer any need to add an Animator or otherwise 'turn-on' animation.
 Calculating deltaTime is done much the same as before, however I recommend initialising oldTime in init() rather than in the constructor.
 
 **Old:**
+
     private Animator animator;
     private long oldTime;
 
