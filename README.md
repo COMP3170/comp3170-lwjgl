@@ -181,5 +181,70 @@ The new InputSystem uses [GLFW keycodes](https://www.glfw.org/docs/3.3/group__ke
         cameraAngle = (cameraAngle + CAMERA_ROTATION_SPEED * deltaTime) % TAU;			
     }
 
+### Animation
 
+There is no longer any need to add an Animator or otherwise 'turn-on' animation. When you call Window.run() it will repeatedly call the draw() method on the listener until the window closes. Double buffering is enabled by default (and is tricky to disable without editing the Window class).
 
+Calculating deltaTime is done much the same as before, however I recommend initialising oldTime in init() rather than in the constructor.
+
+**Old:**
+
+    private Animator animator;
+    private long oldTime;
+
+    public Week3() {
+        // set up a GL canvas
+        GLProfile profile = GLProfile.get(GLProfile.GL4);		 
+        GLCapabilities capabilities = new GLCapabilities(profile);
+        canvas = new GLCanvas(capabilities);
+        canvas.addGLEventListener(this);
+        add(canvas);
+		
+        // set up Animator		
+        animator = new Animator(canvas);
+        animator.start();
+        oldTime = System.currentTimeMillis();				
+    }
+    
+    private void update() {
+        long time = System.currentTimeMillis();
+        float deltaTime = (time - oldTime) / 1000f;
+        oldTime = time;
+        System.out.println("update: dt = " + deltaTime + "s");
+    }
+    
+    public void display(GLAutoDrawable arg0) {
+        // update the scene
+	update();	
+        // ...
+    }
+
+**New:**
+
+    private long oldTime;
+
+    public Week3() throws OpenGLException {
+        window = new Window("Week 3", screenWidth, screenHeight, this);
+        window.run();
+	// no need for an Animator
+    }
+    
+    public void init() {
+        oldTime = System.currentTimeMillis();				
+    }
+    
+    private void update() {
+    	// same code as before
+        long time = System.currentTimeMillis();
+        float deltaTime = (time - oldTime) / 1000f;
+        oldTime = time;
+        System.out.println("update: dt = " + deltaTime + "s");
+    }
+
+    public void draw() {
+        // update the scene
+        update();
+	// ...
+    }
+    
+    
