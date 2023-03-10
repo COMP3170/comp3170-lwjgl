@@ -1,6 +1,7 @@
 package comp3170;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.GLFW_COCOA_RETINA_FRAMEBUFFER;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_DOUBLEBUFFER;
@@ -16,7 +17,6 @@ import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetCursorPos;
-import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
@@ -24,10 +24,10 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -42,10 +42,10 @@ import java.nio.IntBuffer;
 
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
@@ -171,7 +171,8 @@ public class Window {
 		// configure the framebuffer
 		glfwWindowHint(GLFW_SAMPLES, samples);
 		glfwWindowHint(GLFW_DOUBLEBUFFER, isDoubleBuffered ? GLFW_TRUE : GLFW_FALSE);
-		
+		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+
 		// Get the monitor if full screen
 
 		long monitor = NULL;
@@ -202,7 +203,7 @@ public class Window {
 
 		// send a resize event to the WindowListener when the window is resized
 		
-		glfwSetFramebufferSizeCallback(window, new GLFWFramebufferSizeCallback() {
+		glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
 			@Override
 			public void invoke(long window, int width, int height) {
 				windowListener.resize(width, height);
@@ -229,14 +230,13 @@ public class Window {
 
 		windowListener.init();
 
-		// send an initial resize event, since the framebuffer might not be the 
-		// same size as the window (particularly on Macs with retina display)
+		// send an initial resize event, to report the window size
 		
 		try (MemoryStack stack = stackPush()) {
 			IntBuffer width = stack.mallocInt(1); // int*
 			IntBuffer height = stack.mallocInt(1); // int*
 
-			glfwGetFramebufferSize(window, width, height);
+			glfwGetWindowSize(window, width, height);
 			windowListener.resize(width.get(), height.get());
 		}
 		
