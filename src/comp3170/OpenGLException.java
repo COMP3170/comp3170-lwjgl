@@ -1,7 +1,8 @@
 package comp3170;
 
-import org.lwjgl.glfw.GLFWErrorCallback;
 import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+
+import org.lwjgl.glfw.GLFWErrorCallback;
 
 @SuppressWarnings("serial")
 public class OpenGLException extends Exception {
