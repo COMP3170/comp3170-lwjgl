@@ -6,13 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-linux-arm32.jar"/>
-	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-linux-arm64.jar"/>
-	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-linux.jar"/>
-	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-macos-arm64.jar"/>
 	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-macos.jar"/>
-	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-windows-arm64.jar"/>
-	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-windows-x86.jar"/>
 	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-windows.jar"/>
 	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl.jar" sourcepath="lwjgl/lwjgl-sources.jar">
 		<attributes>
@@ -45,18 +39,34 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/comp3170-23s1-lwjgl/lwjgl-opengl/lwjgl-opengl-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="assimp/lwjgl-assimp.jar"/>
+	<classpathentry exported="true" kind="lib" path="assimp/lwjgl-assimp.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/comp3170-23s1-lwjgl/assimp/lwjgl-assimp-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="assimp/lwjgl-assimp-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="assimp/lwjgl-assimp-natives-macos.jar"/>
 	<classpathentry exported="true" kind="lib" path="assimp/lwjgl-assimp-natives-windows.jar"/>
 	<classpathentry exported="true" kind="lib" path="assimp/lwjgl-assimp-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="joml/joml-1.10.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="joml/joml-1.10.5-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="joml/joml-1.10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="stb/lwjgl-stb.jar"/>
+	<classpathentry exported="true" kind="lib" path="stb/lwjgl-stb.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/comp3170-23s1-lwjgl/stb/lwjgl-stb-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="stb/lwjgl-stb-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="stb/lwjgl-stb-natives-macos.jar"/>
 	<classpathentry exported="true" kind="lib" path="stb/lwjgl-stb-natives-windows.jar"/>
 	<classpathentry exported="true" kind="lib" path="stb/lwjgl-stb-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl-glfw/lwjgl-glfw-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl-opengl/lwjgl-opengl-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-glfw-natives-linux.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-glfw-natives-linux-arm32.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-glfw-natives-linux-arm64.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-glfw-natives-macos-arm64.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-glfw-natives-windows-arm64.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-glfw-natives-windows-x86.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
