@@ -156,6 +156,9 @@ public class Window {
 			throw new IllegalStateException("Unable to initialize GLFW");
 		}
 
+		// set a callback to print any GL errors to the console
+		GLFWErrorCallback.createPrint(System.err);
+		
 		// Configure GLFW
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
 
