@@ -1,11 +1,15 @@
 package comp3170;
 
+import java.util.Random;
+
 import org.joml.Vector4f;
 
 public class Math {
 
 	public static float TAU = (float) (2 * java.lang.Math.PI);		// https://tauday.com/tau-manifesto
 
+	private static Random rng = new Random();
+	
 	/**
 	 * Generate a random float between the specified minumum and maximum bounds
 	 * 
@@ -14,7 +18,7 @@ public class Math {
 	 * @return
 	 */
 	public static float random(float min, float max) {
-		return (float) (java.lang.Math.random() * (max - min) + min);
+		return rng.nextFloat() * (max - min) + min;
 	}
 
 	/**
