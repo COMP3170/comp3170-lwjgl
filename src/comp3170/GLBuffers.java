@@ -13,6 +13,7 @@ import static org.lwjgl.opengl.GL20.GL_FLOAT_MAT4;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC2;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC3;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC4;
+import static org.lwjgl.opengl.GL41.*;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -26,8 +27,9 @@ import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 /**
- * Version 2023.1
+ * Version 2023.2
  * 
+ * 2023.2: Added code for framebuffers
  * 2023.1: Rewrote code to work using LWJGL
  * 2022.1: Factored buffer code out of Shader to allow shaders to share buffers
  * 
@@ -317,6 +319,39 @@ public class GLBuffers {
 		}
 		
 		updateBuffer(buffer, floatBuffer, GL_FLOAT_VEC4);
+	}
+	
+
+	/**
+	 * Create a framebuffer that writes colours to the renderTexture given.
+	 * 
+	 * @param renderTexture	A render texture in which to store the colour buffer
+	 * @return	The OpenGL handle to the frame buffer
+	 * @throws OpenGLException 
+	 * @throws GLException
+	 */
+	
+	public static int createFrameBuffer(int renderTexture) throws OpenGLException {
+		int[] width = new int[1];
+		int[] height = new int[1];
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, width);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, height);
+		
+		int framebuffer = glGenFramebuffers();
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);		
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderTexture, 0);
+		
+		int depthrenderbuffer = glGenRenderbuffers();
+		glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width[0], height[0]);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			OpenGLException.checkError();
+			throw new OpenGLException("Failed to create framebuffer");
+		}
+
+		return framebuffer;
 	}
 
 }

@@ -724,6 +724,7 @@ public class Shader {
 		glUniformMatrix4fv(uniform, false, matrix.get(matrix4Buffer));
 	}
 
+	
 	/**
 	 * Turn a shader type constant into a descriptive string.
 	 * 
