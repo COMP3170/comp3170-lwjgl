@@ -1,10 +1,75 @@
 package comp3170;
 
 import static org.lwjgl.BufferUtils.createFloatBuffer;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_INT;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL20.GL_ACTIVE_ATTRIBUTES;
+import static org.lwjgl.opengl.GL20.GL_ACTIVE_ATTRIBUTE_MAX_LENGTH;
+import static org.lwjgl.opengl.GL20.GL_ACTIVE_UNIFORMS;
+import static org.lwjgl.opengl.GL20.GL_ACTIVE_UNIFORM_MAX_LENGTH;
+import static org.lwjgl.opengl.GL20.GL_BOOL;
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_MAT2;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_MAT3;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_MAT4;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC2;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC3;
+import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC4;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_INFO_LOG_LENGTH;
+import static org.lwjgl.opengl.GL20.GL_INT_VEC2;
+import static org.lwjgl.opengl.GL20.GL_INT_VEC3;
+import static org.lwjgl.opengl.GL20.GL_INT_VEC4;
+import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20.GL_SAMPLER_2D;
+import static org.lwjgl.opengl.GL20.GL_SAMPLER_CUBE;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glCompileShader;
+import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glDeleteShader;
+import static org.lwjgl.opengl.GL20.glDetachShader;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glGetActiveAttrib;
+import static org.lwjgl.opengl.GL20.glGetActiveUniform;
+import static org.lwjgl.opengl.GL20.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgrami;
+import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
+import static org.lwjgl.opengl.GL20.glGetShaderi;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glShaderSource;
+import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform1i;
+import static org.lwjgl.opengl.GL20.glUniform2f;
+import static org.lwjgl.opengl.GL20.glUniform2fv;
+import static org.lwjgl.opengl.GL20.glUniform2i;
+import static org.lwjgl.opengl.GL20.glUniform3f;
+import static org.lwjgl.opengl.GL20.glUniform3fv;
+import static org.lwjgl.opengl.GL20.glUniform3i;
+import static org.lwjgl.opengl.GL20.glUniform4f;
+import static org.lwjgl.opengl.GL20.glUniform4fv;
+import static org.lwjgl.opengl.GL20.glUniform4i;
+import static org.lwjgl.opengl.GL20.glUniformMatrix2fv;
+import static org.lwjgl.opengl.GL20.glUniformMatrix3fv;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
+import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT_VEC2;
+import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT_VEC3;
+import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT_VEC4;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-import static org.lwjgl.opengl.GL41.*;
-import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.opengl.GL30.glUniform1ui;
+import static org.lwjgl.opengl.GL30.glUniform2ui;
+import static org.lwjgl.opengl.GL30.glUniform3ui;
+import static org.lwjgl.opengl.GL30.glUniform4ui;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -659,6 +724,7 @@ public class Shader {
 		glUniformMatrix4fv(uniform, false, matrix.get(matrix4Buffer));
 	}
 
+	
 	/**
 	 * Turn a shader type constant into a descriptive string.
 	 * 
