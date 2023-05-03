@@ -66,5 +66,6 @@
 	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-macos-arm64.jar"/>
 	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-windows-arm64.jar"/>
 	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-windows-x86.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl/lwjgl-natives-macos.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
