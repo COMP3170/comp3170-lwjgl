@@ -341,10 +341,10 @@ public class GLBuffers {
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);		
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderTexture, 0);
 		
-		int depthrenderbuffer = glGenRenderbuffers();
-		glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
+		int depthRenderBuffer = glGenRenderbuffers();
+		glBindRenderbuffer(GL_RENDERBUFFER, depthRenderBuffer);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width[0], height[0]);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderBuffer);
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 			OpenGLException.checkError();
