@@ -46,26 +46,24 @@ public class ShaderLibrary {
 	private List<File> searchPath; 	
 	private Map<Pair<String, String>, Shader> loadedShaders;
 
-	public ShaderLibrary(String path) {
-		this(new File(path));
-	}
-	
-	public ShaderLibrary(File path) {
+	public ShaderLibrary() {
 		if (instance != null) {
 			throw new IllegalStateException("An instance of ShaderLibrary already exists.");
 		}
 		instance = this;
-		
-		if (!path.exists()) {
-			throw new IllegalArgumentException(String.format("'%s' does not exist.", path.getAbsolutePath()));
-		}
-		if (!path.isDirectory()) {
-			throw new IllegalArgumentException(String.format("'%s' is not a directory.", path.getAbsolutePath()));
-		}
-		
+
 		searchPath = new ArrayList<File>();
-		searchPath.add(path);
 		loadedShaders = new HashMap<Pair<String, String>, Shader>();
+	}
+
+	public ShaderLibrary(String path) {
+		this();
+		addPath(path);
+	}
+	
+	public ShaderLibrary(File path) {
+		this();
+		addPath(path);
 	}
 
 	public void addPath(String path) {
