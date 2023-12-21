@@ -1,6 +1,7 @@
 package comp3170;
 
 import static org.lwjgl.BufferUtils.createFloatBuffer;
+import static org.lwjgl.BufferUtils.createIntBuffer;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_INT;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
@@ -49,12 +50,15 @@ import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniform2f;
 import static org.lwjgl.opengl.GL20.glUniform2fv;
 import static org.lwjgl.opengl.GL20.glUniform2i;
+import static org.lwjgl.opengl.GL20.glUniform2iv;
 import static org.lwjgl.opengl.GL20.glUniform3f;
 import static org.lwjgl.opengl.GL20.glUniform3fv;
 import static org.lwjgl.opengl.GL20.glUniform3i;
+import static org.lwjgl.opengl.GL20.glUniform3iv;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniform4fv;
 import static org.lwjgl.opengl.GL20.glUniform4i;
+import static org.lwjgl.opengl.GL20.glUniform4iv;
 import static org.lwjgl.opengl.GL20.glUniformMatrix2fv;
 import static org.lwjgl.opengl.GL20.glUniformMatrix3fv;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
@@ -84,8 +88,11 @@ import org.joml.Matrix2f;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.joml.Vector4f;
+import org.joml.Vector4i;
 import org.lwjgl.system.MemoryStack;
 
 /**
@@ -115,6 +122,10 @@ public class Shader {
 	private FloatBuffer vector2Buffer = createFloatBuffer(2);
 	private FloatBuffer vector3Buffer = createFloatBuffer(3);
 	private FloatBuffer vector4Buffer = createFloatBuffer(4);
+
+	private IntBuffer vector2iBuffer = createIntBuffer(2);
+	private IntBuffer vector3iBuffer = createIntBuffer(3);
+	private IntBuffer vector4iBuffer = createIntBuffer(4);
 
 	public Shader(File vertexShaderFile, File fragmentShaderFile) throws IOException, OpenGLException {
 
@@ -596,6 +607,69 @@ public class Shader {
 
 		}
 
+	}
+
+	/**
+	 * Set a uniform of type ivec2 to a Vector2i value
+	 * 
+	 * @param uniformName the uniform to set
+	 * @param vector      the vector value to send
+	 */
+
+	public void setUniform(String uniformName, Vector2i vector) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_INT_VEC2) {
+			throw new IllegalArgumentException(String.format("Expected %s got Vector2i", GLTypes.typeName(type)));
+		}
+
+		glUniform2iv(uniform, vector.get(vector2iBuffer));
+	}
+
+	/**
+	 * Set a uniform of type vec3 to a Vector3f value
+	 * 
+	 * @param uniformName the uniform to set
+	 * @param vector      the vector value to send
+	 */
+
+	public void setUniform(String uniformName, Vector3i vector) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_INT_VEC3) {
+			throw new IllegalArgumentException(String.format("Expected %s got Vector3i", GLTypes.typeName(type)));
+		}
+
+		glUniform3iv(uniform, vector.get(vector3iBuffer));
+	}
+
+	/**
+	 * Set a uniform of type vec4 to a Vector4f value
+	 * 
+	 * @param uniformName the uniform to set
+	 * @param vector      the vector value to send
+	 */
+
+	public void setUniform(String uniformName, Vector4i vector) {
+		int uniform = getUniform(uniformName);
+		if (uniform < 0)
+			return;
+
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_INT_VEC4) {
+			throw new IllegalArgumentException(String.format("Expected %s got Vector4f", GLTypes.typeName(type)));
+		}
+
+		glUniform4iv(uniform, vector.get(vector4iBuffer));
 	}
 
 	/**
