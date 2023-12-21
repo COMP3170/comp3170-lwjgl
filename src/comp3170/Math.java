@@ -11,7 +11,7 @@ public class Math {
 	private static Random rng = new Random();
 	
 	/**
-	 * Generate a random float between the specified minumum and maximum bounds
+	 * Generate a random float between the specified minimum and maximum bounds
 	 * 
 	 * @param min
 	 * @param max
@@ -22,7 +22,7 @@ public class Math {
 	}
 
 	/**
-	 * Linearly interpolate between the specified minumum and maximum bounds.
+	 * Linearly interpolate between the specified minimum and maximum bounds.
 	 * 
 	 * @param min
 	 * @param max
