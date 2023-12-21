@@ -78,18 +78,13 @@ public class TextureLibrary {
 	private final Map<String, Integer> loadedTextures;
 	private List<File> searchPath;
 
-	public TextureLibrary(File path) {
+	public TextureLibrary() {
 		if (instance != null) {
 			throw new IllegalStateException("An instance of TextureLibrary already exists");
 		}
 		instance = this;
 		
-		if (!path.isDirectory()) {
-			throw new IllegalArgumentException(String.format("'%s' is not a directory", path.getName()));
-		}
-		
 		searchPath = new ArrayList<File>();
-		searchPath.add(path);
 		loadedTextures = new HashMap<String, Integer>();
 	}
 	
@@ -171,7 +166,7 @@ public class TextureLibrary {
 	 * 
 	 * @param width	Texture width in pixels
 	 * @param height Texture height in pixels
-	 * @param format Texutre format, one of GL_RED, GL_RG, GL_RGB, GL_BGR, GL_RGBA, GL_BGRA, GL_DEPTH_COMPONENT, GL_DEPTH_STENCIL
+	 * @param format Texture format, one of GL_RED, GL_RG, GL_RGB, GL_BGR, GL_RGBA, GL_BGRA, GL_DEPTH_COMPONENT, GL_DEPTH_STENCIL
 	 * @return	The OpenGL handle to the render texture.
 	 */
 
