@@ -40,7 +40,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
-import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
@@ -292,17 +292,20 @@ public class Window {
 	 * Returns the position of the cursor, in screen coordinates, 
 	 * relative to the upper-left corner of the content area of the window.
 	 * 
-	 * @param dest	A pre-allocated Vector2f into which to write the result 
+	 * @param dest	A pre-allocated Vector2i into which to write the result 
 	 * @return
 	 */
 	
-	public Vector2f getCursorPos(Vector2f dest) {
+	public Vector2i getCursorPos(Vector2i dest) {
 		try (MemoryStack stack = stackPush()) {
 			DoubleBuffer x = stack.mallocDouble(1); // int*
 			DoubleBuffer y = stack.mallocDouble(1); // int*
 
 			glfwGetCursorPos(window, x, y);
-			dest.set(x.get(), y.get());
+			
+			int xi = (int)java.lang.Math.floor(x.get());
+			int yi = (int)java.lang.Math.floor(y.get());
+			dest.set(xi, yi);
 		}
 		
 		return dest;
