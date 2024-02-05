@@ -7,7 +7,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.joml.Vector2f;
+import org.joml.Vector2i;
 
 /**
  * Input manager class for COMP3170 projects.
@@ -160,7 +160,7 @@ public class InputManager implements IWindowInputListener {
 	 * @return
 	 */
 	
-	public Vector2f getCursorPos(Vector2f dest) {
+	public Vector2i getCursorPos(Vector2i dest) {
 		return window.getCursorPos(dest);
 	}
 
