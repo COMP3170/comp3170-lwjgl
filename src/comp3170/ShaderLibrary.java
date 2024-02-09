@@ -66,18 +66,20 @@ public class ShaderLibrary {
 		addPath(path);
 	}
 
-	public void addPath(String path) {
-		addPath(new File(path));
+	public ShaderLibrary addPath(String path) {
+		return addPath(new File(path));
 	}
 	
-	public void addPath(File path) {
+	public ShaderLibrary addPath(File path) {
 		if (!path.exists()) {
 			throw new IllegalArgumentException(String.format("'%s' does not exist.", path.getAbsolutePath()));
 		}
 		if (!path.isDirectory()) {
 			throw new IllegalArgumentException(String.format("'%s' is not a directory", path.getAbsolutePath()));
 		}
-		searchPath.add(path);		
+		searchPath.add(path);
+		
+		return this;
 	}
 	
 	/**
