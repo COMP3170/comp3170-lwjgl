@@ -5,7 +5,7 @@ public interface IWindowListener {
 	/**
 	 * Initialise the scene. Called once when the Window is first created
 	 */
-	
+
 	public void init();
 
 	/**
@@ -16,12 +16,12 @@ public interface IWindowListener {
 
 	/**
 	 * Resize the canvas. Called when the window has been resized.
-	 * 
+	 *
 	 * @param width	Canvas width in pixels
 	 * @param height Canvas height in pixels
 	 */
 	public void resize(int width, int height);
-	
+
 	/**
 	 * Close the scene. Called when the window is closed.
 	 */

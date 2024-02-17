@@ -43,32 +43,32 @@ import org.lwjgl.BufferUtils;
 /**
  * This class provides a wrapper to the OpenGL and STBI library calls
  * necessary to load an image file for use as an OpenGL texture.
- * 
- * This class implements a basic version of the Singleton pattern. 
+ *
+ * This class implements a basic version of the Singleton pattern.
  * To use it, follow these steps:
- * 
+ *
  * 1) Create a new copy of TextureLibrary with the path to the directory containing your
  * shaders when you initialise your scene:
- * 
+ *
  *    public static final File TEXTURE_DIRECTORY = new File("comp3170/demos/week11/textures");
- * 
+ *
  *    public void init() {
  *       // create an instance of the ShaderLibrary singleton
  * 	     new TextureLibrary(TEXTURE_DIRECTORY);
  *    }
  *
  * 2) When loading a texture, call TextureLibrary.instance.loadTexture().
- *  
+ *
  * If the texture you specify has already been loaded, it will be returned.
  * Otherwise a new copy of the texture will be loaded and recorded in the library.
- * 
+ *
  *    public static final String TEXTURE = "bricks.png";
  * 	  private int texture;
- * 
- *    public Cylinder() {        
+ *
+ *    public Cylinder() {
  *        texture = TextureLibrary.instance.loadTexture(TEXTURE);
  *    }
- * 
+ *
  * @author malcolmryan
  *
  */
@@ -83,29 +83,29 @@ public class TextureLibrary {
 			throw new IllegalStateException("An instance of TextureLibrary already exists");
 		}
 		instance = this;
-		
-		searchPath = new ArrayList<File>();
-		loadedTextures = new HashMap<String, Integer>();
+
+		searchPath = new ArrayList<>();
+		loadedTextures = new HashMap<>();
 	}
-	
+
 	public TextureLibrary(File path) {
 		this();
-		this.addPath(path);		
+		this.addPath(path);
 	}
-	
+
 
 	public TextureLibrary addPath(File path) {
 		if (!path.isDirectory()) {
 			throw new IllegalArgumentException(String.format("'%s' is not a directory", path.getName()));
 		}
 		searchPath.add(path);
-		
+
 		return this;
 	}
-	
+
 	/**
 	 * Load a texture from an image file.
-	 * 
+	 *
 	 * @param filename The image file
 	 * @return The GL texture handle
 	 * @throws IOException
@@ -118,25 +118,25 @@ public class TextureLibrary {
 
 		// Load the image file using STBI library
 		File textureFile = findFile(filename);
-		
+
 		IntBuffer x = BufferUtils.createIntBuffer(1);
 		IntBuffer y = BufferUtils.createIntBuffer(1);
 		IntBuffer channels = BufferUtils.createIntBuffer(1);
-		
+
 		stbi_set_flip_vertically_on_load(true);
 		ByteBuffer image = stbi_load(textureFile.getAbsolutePath(), x, y, channels, STBI_rgb_alpha);
 
 		if (image == null) {
 			throw new IOException(stbi_failure_reason());
 		}
-				
+
 		// Create a new texture
-		
+
 		int textureID = glGenTextures();
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		
+
 		// Set the texture data to the loaded image data
-		
+
 		// stbi_load always returns 8 bits per channel
 		// See: https://javadoc.lwjgl.org/org/lwjgl/stb/STBImage.html#stbi_load(java.lang.CharSequence,java.nio.IntBuffer,java.nio.IntBuffer,java.nio.IntBuffer,int)
 		// regardless of external format, we'll store the texture internally as RGBA
@@ -171,7 +171,7 @@ public class TextureLibrary {
 
 	/**
 	 * Create a render texture with the specified dimensions.
-	 * 
+	 *
 	 * @param width	Texture width in pixels
 	 * @param height Texture height in pixels
 	 * @param format Texture format, one of GL_RED, GL_RG, GL_RGB, GL_BGR, GL_RGBA, GL_BGRA, GL_DEPTH_COMPONENT, GL_DEPTH_STENCIL
@@ -187,20 +187,20 @@ public class TextureLibrary {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		
+
 		return renderTexture;
 	}
 
 	// Each of the sides of the cubemap
-	private static final int[] SIDES = { 
+	private static final int[] SIDES = {
 		GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-		GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 
-		GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z 
+		GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+		GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 	};
 
 	/**
 	 * Create a cube map from six image files.
-	 * 
+	 *
 	 * @param filename	An arrange containing six filenames in the order [+X, -X, +Y, -Y, +Z, -Z]
 	 * @return The OpenGL handle to the cubemap
 	 * @throws IOException
@@ -225,7 +225,7 @@ public class TextureLibrary {
 			ByteBuffer image = stbi_load(file.getAbsolutePath(), x, y, channels, STBI_rgb_alpha);
 			glTexImage2D(SIDES[i], 0, GL_RGBA, x.get(), y.get(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 			OpenGLException.checkError();
-			
+
 			// Free the image file
 			stbi_image_free(image);
 		}

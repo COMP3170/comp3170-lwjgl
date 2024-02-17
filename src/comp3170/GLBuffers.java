@@ -1,8 +1,12 @@
 package comp3170;
 
+import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL11.GL_INT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_HEIGHT;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WIDTH;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glGetTexLevelParameteriv;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -15,7 +19,20 @@ import static org.lwjgl.opengl.GL20.GL_FLOAT_MAT4;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC2;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC3;
 import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC4;
-import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_COMPLETE;
+import static org.lwjgl.opengl.GL30.GL_MAX_COLOR_ATTACHMENTS;
+import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
+import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
+import static org.lwjgl.opengl.GL30.glCheckFramebufferStatus;
+import static org.lwjgl.opengl.GL30.glFramebufferRenderbuffer;
+import static org.lwjgl.opengl.GL30.glGenFramebuffers;
+import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
+import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
+import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -30,19 +47,19 @@ import org.lwjgl.BufferUtils;
 
 /**
  * Version 2023.2
- * 
+ *
  * 2023.2: Added code for framebuffers 2023.1: Rewrote code to work using LWJGL
  * 2022.1: Factored buffer code out of Shader to allow shaders to share buffers
- * 
+ *
  * @author Malcolm Ryan
  */
 
 public class GLBuffers {
-	static private Map<Integer, Integer> bufferTypes = new HashMap<Integer, Integer>();
+	static private Map<Integer, Integer> bufferTypes = new HashMap<>();
 
 	/**
 	 * Get the GL type of a buffer.
-	 * 
+	 *
 	 * @param buffer An allocated buffer
 	 * @return the type value
 	 * @throws IllegalArgumentException if the buffer has not been allocated.
@@ -58,7 +75,7 @@ public class GLBuffers {
 
 	/**
 	 * Check the type of a buffer matches the expected type
-	 * 
+	 *
 	 * @param buffer An allocated buffer
 	 * @param type   The expected type
 	 * @return true if the buffer type matches the expected type
@@ -76,7 +93,7 @@ public class GLBuffers {
 	/**
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
 	 * it
-	 * 
+	 *
 	 * @param data The data as an array of floats
 	 * @param type The type of data in this buffer
 	 * @return The OpenGL handle to the VBO
@@ -101,7 +118,7 @@ public class GLBuffers {
 	/**
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
 	 * it
-	 * 
+	 *
 	 * @param data The data as a FloatBuffer
 	 * @param type The type of data in this buffer
 	 * @return The OpenGL handle to the VBO
@@ -126,7 +143,7 @@ public class GLBuffers {
 	/**
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
 	 * it
-	 * 
+	 *
 	 * @param data The data as an array of Vector2f
 	 * @return The OpenGL handle to the VBO
 	 */
@@ -143,7 +160,7 @@ public class GLBuffers {
 	/**
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
 	 * it
-	 * 
+	 *
 	 * @param data The data as an array of Vector3f
 	 * @return The OpenGL handle to the VBO
 	 */
@@ -160,7 +177,7 @@ public class GLBuffers {
 	/**
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
 	 * it.
-	 * 
+	 *
 	 * @param data The data as an array of Vector4f
 	 * @return The OpenGL handle to the VBO
 	 */
@@ -177,7 +194,7 @@ public class GLBuffers {
 	/**
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
 	 * it
-	 * 
+	 *
 	 * @param data The data as an array of Matrix3f
 	 * @return The OpenGL handle to the VBO
 	 */
@@ -194,7 +211,7 @@ public class GLBuffers {
 	/**
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
 	 * it
-	 * 
+	 *
 	 * @param data The data as an array of Matrix4f
 	 * @return The OpenGL handle to the VBO
 	 */
@@ -211,7 +228,7 @@ public class GLBuffers {
 
 	/**
 	 * Create a new index buffer and initialise it
-	 * 
+	 *
 	 * @param indices The indices as an array of ints
 	 * @return The OpenGL handle to the index buffer
 	 */
@@ -228,7 +245,7 @@ public class GLBuffers {
 
 	/**
 	 * Update the contents of a VBO
-	 * 
+	 *
 	 * @param buffer The OpenGL handle to the VBO
 	 * @param type   The type of data in this buffer
 	 * @return The OpenGL handle to the VBO
@@ -249,7 +266,7 @@ public class GLBuffers {
 
 	/**
 	 * Update the contents of a VBO
-	 * 
+	 *
 	 * @param buffer The OpenGL handle to the VBO
 	 * @param type   The type of data in this buffer
 	 * @return The OpenGL handle to the VBO
@@ -270,7 +287,7 @@ public class GLBuffers {
 
 	/**
 	 * Update the contents of a VBO
-	 * 
+	 *
 	 * @param buffer The OpenGL handle to the VBO
 	 * @param data   The data as an array of Vector2f
 	 */
@@ -287,7 +304,7 @@ public class GLBuffers {
 
 	/**
 	 * Update the contents of a VBO
-	 * 
+	 *
 	 * @param buffer The OpenGL handle to the VBO
 	 * @param data   The data as an array of Vector3f
 	 */
@@ -304,7 +321,7 @@ public class GLBuffers {
 
 	/**
 	 * Update the contents of a VBO
-	 * 
+	 *
 	 * @param buffer The OpenGL handle to the VBO
 	 * @param data   The data as an array of Vector4f
 	 */
@@ -321,7 +338,7 @@ public class GLBuffers {
 
 	/**
 	 * Create a framebuffer that writes colours to the renderTexture given.
-	 * 
+	 *
 	 * @param renderTexture A render texture in which to store the colour buffer
 	 * @return The OpenGL handle to the frame buffer
 	 * @throws OpenGLException
@@ -354,7 +371,7 @@ public class GLBuffers {
 
 	/**
 	 * Create a framebuffer that writes to multiple colour buffers.
-	 * 
+	 *
 	 * @param renderTexture A render texture in which to store the colour buffer
 	 * @return The OpenGL handle to the frame buffer
 	 * @throws OpenGLException

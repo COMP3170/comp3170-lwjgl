@@ -52,9 +52,9 @@ import org.lwjgl.system.MemoryStack;
 
 /**
  * Basic OpenGL window class.
- * 
+ *
  * To run on MacOS, set -XstartOnFirstThread as a VM flag
- * 
+ *
  * @author mq20145620
  */
 
@@ -75,11 +75,11 @@ public class Window {
 	private boolean isResizable = false;
 	private boolean isFullScreen = false;
 	private boolean isDoubleBuffered = true;
-	private int samples = 0; 
+	private int samples = 0;
 
 	/**
 	 * Create a window.
-	 * 
+	 *
 	 * @param title     The window title.
 	 * @param width     The desired width of the window (in pixels)
 	 * @param height    The desired height of the window (in pixels)
@@ -100,30 +100,30 @@ public class Window {
 
 	/**
 	 * Set whether the window is full screen (default false)
-	 * 
-	 * This must be called before running the window. 
+	 *
+	 * This must be called before running the window.
 	 */
-	
+
 	public void setFullScreen(boolean fullScreen) {
 		isFullScreen = fullScreen;
 	}
 
 	/**
 	 * Set whether the window is resizable (default false)
-	 * 
-	 * This must be called before running the window. 
+	 *
+	 * This must be called before running the window.
 	 */
-	
+
 	public void setResizable(boolean resizable) {
 		isResizable = resizable;
 	}
 
 	/**
 	 * Set whether the window is double-buffered (default true)
-	 * 
-	 * This must be called before running the window. 
+	 *
+	 * This must be called before running the window.
 	 */
-	
+
 	public void setDoubleBuffered(boolean doubleBuffered) {
 		isDoubleBuffered = doubleBuffered;
 	}
@@ -131,15 +131,15 @@ public class Window {
 	/**
 	 * Set multisampling rate.
 	 * samples = 0 disables multisampling (default).
-	 * 
-	 * This must be called before running the window. 
+	 *
+	 * This must be called before running the window.
 	 */
-	
+
 	public void setSamples(int samples) {
 		this.samples = samples;
 	}
 
-	
+
 	public void run() throws OpenGLException {
 		init();
 		loop();
@@ -158,7 +158,7 @@ public class Window {
 
 		// set a callback to print any GL errors to the console
 		GLFWErrorCallback.createPrint(System.err);
-		
+
 		// Configure GLFW
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
 
@@ -205,7 +205,7 @@ public class Window {
 		} // the stack frame is popped automatically
 
 		// send a resize event to the WindowListener when the window is resized
-		
+
 		glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
 			@Override
 			public void invoke(long window, int width, int height) {
@@ -234,7 +234,7 @@ public class Window {
 		windowListener.init();
 
 		// send an initial resize event, to report the window size
-		
+
 		try (MemoryStack stack = stackPush()) {
 			IntBuffer width = stack.mallocInt(1); // int*
 			IntBuffer height = stack.mallocInt(1); // int*
@@ -242,7 +242,7 @@ public class Window {
 			glfwGetWindowSize(window, width, height);
 			windowListener.resize(width.get(), height.get());
 		}
-		
+
 
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
@@ -268,47 +268,47 @@ public class Window {
 
 	/**
 	 * Add a listener to listen to key and mouse events in the window.
-	 * 
+	 *
 	 * @param listener
 	 */
-	
+
 	public void setInputListener(IWindowInputListener listener) {
 		glfwSetKeyCallback(window, new GLFWKeyCallbackI() {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {
-				listener.keyEvent(key, action, mods);			
-			}			
+				listener.keyEvent(key, action, mods);
+			}
 		});
 
 		glfwSetMouseButtonCallback(window, new GLFWMouseButtonCallbackI() {
 			@Override
 			public void invoke(long window, int button, int action, int mods) {
-				listener.mouseButtonEvent(button, action, mods);			
+				listener.mouseButtonEvent(button, action, mods);
 			}
 		});
 	}
-	
+
 	/**
-	 * Returns the position of the cursor, in screen coordinates, 
+	 * Returns the position of the cursor, in screen coordinates,
 	 * relative to the upper-left corner of the content area of the window.
-	 * 
-	 * @param dest	A pre-allocated Vector2i into which to write the result 
+	 *
+	 * @param dest	A pre-allocated Vector2i into which to write the result
 	 * @return
 	 */
-	
+
 	public Vector2i getCursorPos(Vector2i dest) {
 		try (MemoryStack stack = stackPush()) {
 			DoubleBuffer x = stack.mallocDouble(1); // int*
 			DoubleBuffer y = stack.mallocDouble(1); // int*
 
 			glfwGetCursorPos(window, x, y);
-			
+
 			int xi = (int)java.lang.Math.floor(x.get());
 			int yi = (int)java.lang.Math.floor(y.get());
 			dest.set(xi, yi);
 		}
-		
+
 		return dest;
 	}
-	
+
 }

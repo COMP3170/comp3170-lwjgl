@@ -9,10 +9,10 @@ public class Math {
 	public static float TAU = (float) (2 * java.lang.Math.PI);		// https://tauday.com/tau-manifesto
 
 	private static Random rng = new Random();
-	
+
 	/**
 	 * Generate a random float between the specified minimum and maximum bounds
-	 * 
+	 *
 	 * @param min
 	 * @param max
 	 * @return
@@ -23,10 +23,10 @@ public class Math {
 
 	/**
 	 * Linearly interpolate between the specified minimum and maximum bounds.
-	 * 
+	 *
 	 * @param min
 	 * @param max
-	 * @param t 	 
+	 * @param t
 	 * @return
 	 */
 	public static float lerp(float min, float max, float t) {
@@ -36,7 +36,7 @@ public class Math {
 	/**
 	 * Calculate the cross product of homogeneous vectors a and b.
 	 * Store the result in dest.
-	 * 
+	 *
 	 * @param a The first vector
 	 * @param b The second vector
 	 * @param dest A pre-allocated vector in which to store the result

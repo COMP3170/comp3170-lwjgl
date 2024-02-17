@@ -77,20 +77,20 @@ import static org.lwjgl.opengl.GL40.GL_DOUBLE_VEC4;
 
 /**
  * Version 2023.1
- * 
+ *
  * 2023.1: Converted to LWJGL 3
  * 2022.1: Factored out of Shader class
- * 
+ *
  * @author Malcolm Ryan
  */
 public class GLTypes {
 
 	/**
-	 * Get the number of elements in a type. 
+	 * Get the number of elements in a type.
 	 * Returns 1 for all base types.
 	 * For vector types, returns the number of elements in the vector.
 	 * For matrix types, returns the number of elements in the matrix.
-	 * 
+	 *
 	 * @param type	The GL Type
 	 * @return the number of elements
 	 */
@@ -166,7 +166,7 @@ public class GLTypes {
 	}
 
 	/**
-	 * Get the base type of a compound type. 
+	 * Get the base type of a compound type.
 	 */
 
 	static public int elementType(int type) {
@@ -425,7 +425,7 @@ public class GLTypes {
 		case GL_UNSIGNED_INT_SAMPLER_2D_RECT:
 			return "usampler2DRect";
 		}
-		
+
 		throw new IllegalArgumentException("Unknown GL type: " + type);
 	}
 

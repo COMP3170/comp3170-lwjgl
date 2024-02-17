@@ -1,8 +1,14 @@
 package comp3170;
 
+import static org.lwjgl.opengl.GL11.GL_INVALID_ENUM;
+import static org.lwjgl.opengl.GL11.GL_INVALID_OPERATION;
+import static org.lwjgl.opengl.GL11.GL_INVALID_VALUE;
 import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.GL_OUT_OF_MEMORY;
+import static org.lwjgl.opengl.GL11.GL_STACK_OVERFLOW;
+import static org.lwjgl.opengl.GL11.GL_STACK_UNDERFLOW;
 import static org.lwjgl.opengl.GL11.glGetError;
-import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 
@@ -10,17 +16,17 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 public class OpenGLException extends Exception {
 
 	private int glError;
-	
+
 	public OpenGLException(int glError, long description) {
-		super(String.format("OpenGLException: %s\n", GLFWErrorCallback.getDescription(description)));	
+		super(String.format("OpenGLException: %s\n", GLFWErrorCallback.getDescription(description)));
 		this.glError = glError;
 	}
-	
+
 	public OpenGLException(String message) {
 		super(message);
 		this.glError = GL_NO_ERROR;
 	}
-	
+
 	public OpenGLException(int glError) {
 		super(glErrorDescription(glError));
 		this.glError = glError;
@@ -29,16 +35,16 @@ public class OpenGLException extends Exception {
 	public int getErrorCode() {
 		return this.glError;
 	}
-	
+
 	public static String glErrorDescription(int error) {
 		switch (error) {
-			
+
 		case GL_NO_ERROR:
 			return "GL_NO_ERROR: No error has been recorded.";
 		case GL_INVALID_ENUM:
 			return "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument.";
 		case GL_INVALID_VALUE:
-			return "GL_INVALID_VALUE: A numeric argument is out of range.";			
+			return "GL_INVALID_VALUE: A numeric argument is out of range.";
 		case GL_INVALID_OPERATION:
 			return "GL_INVALID_OPERATION: The specified operation is not allowed in the current state.";
 		case GL_INVALID_FRAMEBUFFER_OPERATION:

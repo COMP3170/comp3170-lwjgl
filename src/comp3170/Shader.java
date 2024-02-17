@@ -97,10 +97,10 @@ import org.lwjgl.system.MemoryStack;
 
 /**
  * Version 2023.1
- * 
+ *
  * 2023.1: Rewrote code to work in LWJGL 3 2022.1: Factored into Shader,
  * GLBuffers, and GLTypes to allow shaders to share buffers
- * 
+ *
  * @author Malcolm Ryan
  */
 
@@ -148,10 +148,10 @@ public class Shader {
 		glDetachShader(this.program, fragmentShader);
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
-		
+
 		// generate VAO (not used)
 		// this is needed to make anything show on screen
-	 	
+
 		int vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 
@@ -163,7 +163,7 @@ public class Shader {
 
 	/**
 	 * Check whether uniform & attribute names are being enforced.
-	 * 
+	 *
 	 * @return true if names are being enforced
 	 */
 	public boolean isStrict() {
@@ -172,11 +172,11 @@ public class Shader {
 
 	/**
 	 * Set whether uniform & attribute names are being enforced.
-	 * 
+	 *
 	 * If true, incorrect uniform and attribute names will throw exceptions. If
 	 * false, incorrect uniform and attribute names will print a message to the
 	 * console and continue.
-	 * 
+	 *
 	 * @param strict
 	 */
 	public void setStrict(boolean strict) {
@@ -198,13 +198,13 @@ public class Shader {
 
 	/**
 	 * Read source code from a shader file.
-	 * 
+	 *
 	 * @param shaderFile
 	 * @return
 	 * @throws IOException
 	 */
 	private static String[] readSource(File shaderFile) throws IOException {
-		ArrayList<String> source = new ArrayList<String>();
+		ArrayList<String> source = new ArrayList<>();
 		BufferedReader in = null;
 
 		try {
@@ -281,9 +281,9 @@ public class Shader {
 	 */
 
 	private void recordAttributes() {
-		attributes = new HashMap<String, Integer>();
-		attributeTypes = new HashMap<String, Integer>();
-		trackedAttributeErrors = new HashMap<String, Boolean>();
+		attributes = new HashMap<>();
+		attributeTypes = new HashMap<>();
+		trackedAttributeErrors = new HashMap<>();
 
 		int activeAttributes = glGetProgrami(program, GL_ACTIVE_ATTRIBUTES);
 		int maxNameSize = glGetProgrami(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH);
@@ -307,14 +307,14 @@ public class Shader {
 
 	/**
 	 * Establish the mapping from uniform names to IDs
-	 * 
+	 *
 	 * @param trackedUniformErrors
 	 */
 
 	private void recordUniforms() {
-		uniforms = new HashMap<String, Integer>();
-		uniformTypes = new HashMap<String, Integer>();
-		trackedUniformErrors = new HashMap<String, Boolean>();
+		uniforms = new HashMap<>();
+		uniformTypes = new HashMap<>();
+		trackedUniformErrors = new HashMap<>();
 
 		int activeUniforms = glGetProgrami(program, GL_ACTIVE_UNIFORMS);
 		int maxNameSize = glGetProgrami(program, GL_ACTIVE_UNIFORM_MAX_LENGTH);
@@ -337,7 +337,7 @@ public class Shader {
 
 	/**
 	 * Check if the shader has a particular attribute
-	 * 
+	 *
 	 * @param name The name of the attribute
 	 * @return true if the shader has an attribute with the name provided
 	 */
@@ -348,7 +348,7 @@ public class Shader {
 
 	/**
 	 * Check if the shader has a particular uniform
-	 * 
+	 *
 	 * @param name The name of the uniform
 	 * @return true if the shader has a uniform with the name provided
 	 */
@@ -359,7 +359,7 @@ public class Shader {
 
 	/**
 	 * Get the handle for an attribute
-	 * 
+	 *
 	 * @param name The name of the attribute
 	 * @return The OpenGL handle for the attribute
 	 */
@@ -381,7 +381,7 @@ public class Shader {
 
 	/**
 	 * Get the handle for a uniform
-	 * 
+	 *
 	 * @param name The name of the uniform
 	 * @return The OpenGL handle for the uniform
 	 */
@@ -403,14 +403,15 @@ public class Shader {
 
 	/**
 	 * Connect a buffer to a shader attribute
-	 * 
+	 *
 	 * @param attributeName The name of the shader attribute
 	 * @param buffer        The buffer
 	 */
 	public void setAttribute(String attributeName, int buffer) {
 		int attribute = getAttribute(attributeName);
-		if (attribute < 0)
+		if (attribute < 0) {
 			return;
+		}
 
 		int type = attributeTypes.get(attributeName);
 		GLBuffers.checkType(buffer, type);
@@ -420,30 +421,31 @@ public class Shader {
 
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
 		if (size <= 4) {
-			glVertexAttribPointer(attribute, size, elementType, false, 0, 0);			
+			glVertexAttribPointer(attribute, size, elementType, false, 0, 0);
 		}
 		else {
 			// mat3 = 3 x vec3, mat4 = 4 x vec4
 			int stride = GLTypes.stride(type);
 			int n = (size-1) / stride;
 			for (int i = 0; i < n; i++) {
-				glVertexAttribPointer(attribute+i, stride, elementType, false, stride, 0);							
+				glVertexAttribPointer(attribute+i, stride, elementType, false, stride, 0);
 			}
 		}
 		glEnableVertexAttribArray(attribute);
 	}
 
-	
+
 	/**
 	 * Set the value of a uniform to a boolean
-	 * 
+	 *
 	 * @param uniformName The GLSL uniform
 	 * @param value       The int value
 	 */
 	public void setUniform(String uniformName, boolean value) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -458,14 +460,15 @@ public class Shader {
 
 	/**
 	 * Set the value of a uniform to an int
-	 * 
+	 *
 	 * @param uniformName The GLSL uniform
 	 * @param value       The int value
 	 */
 	public void setUniform(String uniformName, int value) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -485,14 +488,15 @@ public class Shader {
 
 	/**
 	 * Set the value of a uniform to a float
-	 * 
+	 *
 	 * @param uniformName The GLSL uniform
 	 * @param value       The float value
 	 */
 	public void setUniform(String uniformName, float value) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -505,18 +509,19 @@ public class Shader {
 
 	/**
 	 * Set the value of a uniform to an array of int
-	 * 
+	 *
 	 * This works for GLSL types float, vec2, vec3, vec4, mat2, mat3 and mat4.
-	 * 
+	 *
 	 * Note that for matrix types, the elements should be specified in column order
-	 * 
+	 *
 	 * @param uniformName
 	 * @param value
 	 */
 	public void setUniform(String uniformName, int[] value) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 		int expectedArgs = GLTypes.typeSize(type);
@@ -558,18 +563,19 @@ public class Shader {
 
 	/**
 	 * Set the value of a uniform to an array of floats
-	 * 
+	 *
 	 * This works for GLSL types float, vec2, vec3, vec4, mat2, mat3 and mat4.
-	 * 
+	 *
 	 * Note that for matrix types, the elements should be specified in column order
-	 * 
+	 *
 	 * @param uniformName
 	 * @param value
 	 */
 	public void setUniform(String uniformName, float[] value) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 		int expectedArgs = GLTypes.typeSize(type);
@@ -611,15 +617,16 @@ public class Shader {
 
 	/**
 	 * Set a uniform of type ivec2 to a Vector2i value
-	 * 
+	 *
 	 * @param uniformName the uniform to set
 	 * @param vector      the vector value to send
 	 */
 
 	public void setUniform(String uniformName, Vector2i vector) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -632,15 +639,16 @@ public class Shader {
 
 	/**
 	 * Set a uniform of type vec3 to a Vector3f value
-	 * 
+	 *
 	 * @param uniformName the uniform to set
 	 * @param vector      the vector value to send
 	 */
 
 	public void setUniform(String uniformName, Vector3i vector) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -653,15 +661,16 @@ public class Shader {
 
 	/**
 	 * Set a uniform of type vec4 to a Vector4f value
-	 * 
+	 *
 	 * @param uniformName the uniform to set
 	 * @param vector      the vector value to send
 	 */
 
 	public void setUniform(String uniformName, Vector4i vector) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -674,15 +683,16 @@ public class Shader {
 
 	/**
 	 * Set a uniform of type vec2 to a Vector2f value
-	 * 
+	 *
 	 * @param uniformName the uniform to set
 	 * @param vector      the vector value to send
 	 */
 
 	public void setUniform(String uniformName, Vector2f vector) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -695,15 +705,16 @@ public class Shader {
 
 	/**
 	 * Set a uniform of type vec3 to a Vector3f value
-	 * 
+	 *
 	 * @param uniformName the uniform to set
 	 * @param vector      the vector value to send
 	 */
 
 	public void setUniform(String uniformName, Vector3f vector) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -716,15 +727,16 @@ public class Shader {
 
 	/**
 	 * Set a uniform of type vec4 to a Vector4f value
-	 * 
+	 *
 	 * @param uniformName the uniform to set
 	 * @param vector      the vector value to send
 	 */
 
 	public void setUniform(String uniformName, Vector4f vector) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -737,15 +749,16 @@ public class Shader {
 
 	/**
 	 * Set a uniform of type mat2 to a Matrix2f value
-	 * 
+	 *
 	 * @param uniformName the uniform to set
 	 * @param matrix      the matrix value to send
 	 */
 
 	public void setUniform(String uniformName, Matrix2f matrix) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -758,15 +771,16 @@ public class Shader {
 
 	/**
 	 * Set a uniform of type mat3 to a Matrix3f value
-	 * 
+	 *
 	 * @param uniformName the uniform to set
 	 * @param matrix      the matrix value to send
 	 */
 
 	public void setUniform(String uniformName, Matrix3f matrix) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -779,15 +793,16 @@ public class Shader {
 
 	/**
 	 * Set a uniform of type mat4 to a Matrix4 value
-	 * 
+	 *
 	 * @param uniformName the uniform to set
 	 * @param matrix      the matrix value to send
 	 */
 
 	public void setUniform(String uniformName, Matrix4f matrix) {
 		int uniform = getUniform(uniformName);
-		if (uniform < 0)
+		if (uniform < 0) {
 			return;
+		}
 
 		int type = uniformTypes.get(uniformName);
 
@@ -798,10 +813,10 @@ public class Shader {
 		glUniformMatrix4fv(uniform, false, matrix.get(matrix4Buffer));
 	}
 
-	
+
 	/**
 	 * Turn a shader type constant into a descriptive string.
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
