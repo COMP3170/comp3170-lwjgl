@@ -88,11 +88,19 @@ public class TextureLibrary {
 		loadedTextures = new HashMap<String, Integer>();
 	}
 	
-	public void addPath(File path) {
+	public TextureLibrary(File path) {
+		this();
+		this.addPath(path);		
+	}
+	
+
+	public TextureLibrary addPath(File path) {
 		if (!path.isDirectory()) {
 			throw new IllegalArgumentException(String.format("'%s' is not a directory", path.getName()));
 		}
-		searchPath.add(path);		
+		searchPath.add(path);
+		
+		return this;
 	}
 	
 	/**
