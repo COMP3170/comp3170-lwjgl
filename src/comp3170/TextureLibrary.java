@@ -207,13 +207,26 @@ public class TextureLibrary {
 	 * @throws OpenGLException
 	 */
 	public int loadCubemap(String[] filename) throws IOException, OpenGLException {
+		return loadCubemap(filename, false);
+	}
+		
+	/**
+	 * Create a cube map from six image files.
+	 *
+	 * @param filename	An arrange containing six filenames in the order [+X, -X, +Y, -Y, +Z, -Z]
+	 * @param flipY Flip the images around the Y axis
+	 * @return The OpenGL handle to the cubemap
+	 * @throws IOException
+	 * @throws OpenGLException
+	 */
+	public int loadCubemap(String[] filename, boolean flipY) throws IOException, OpenGLException {
 		// create a cubemap texture
 		int textureID = glGenTextures();
 		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
 		// load the images for the six sides of the cube
 
-		stbi_set_flip_vertically_on_load(true);
+		stbi_set_flip_vertically_on_load(flipY);
 
 		for (int i = 0; i < filename.length; i++) {
 			File file = findFile(filename[i]);
