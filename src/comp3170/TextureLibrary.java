@@ -90,9 +90,13 @@ public class TextureLibrary {
 
 	public TextureLibrary(File path) {
 		this();
-		this.addPath(path);
+		addPath(path);
 	}
 
+	public TextureLibrary(File[] paths) {
+		this();
+		addPaths(paths);
+	}
 
 	public TextureLibrary addPath(File path) {
 		if (!path.isDirectory()) {
@@ -103,6 +107,12 @@ public class TextureLibrary {
 		return this;
 	}
 
+	public TextureLibrary addPaths(File[] paths) {
+		for (int i = 0; i < paths.length; i++) {
+			addPath(paths[i]);
+		}
+		return this;
+	}
 	/**
 	 * Load a texture from an image file.
 	 *

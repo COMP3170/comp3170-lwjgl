@@ -61,9 +61,19 @@ public class ShaderLibrary {
 		addPath(path);
 	}
 
+	public ShaderLibrary(String[] paths) {
+		this();
+		addPaths(paths);
+	}
+
 	public ShaderLibrary(File path) {
 		this();
 		addPath(path);
+	}
+
+	public ShaderLibrary(File[] paths) {
+		this();
+		addPaths(paths);
 	}
 
 	public ShaderLibrary addPath(String path) {
@@ -79,6 +89,20 @@ public class ShaderLibrary {
 		}
 		searchPath.add(path);
 
+		return this;
+	}
+
+	public ShaderLibrary addPaths(String[] paths) {
+		for (int i = 0; i < paths.length; i++) {
+			addPath(paths[i]);
+		}
+		return this;
+	}
+
+	public ShaderLibrary addPaths(File[] paths) {
+		for (int i = 0; i < paths.length; i++) {
+			addPath(paths[i]);
+		}
 		return this;
 	}
 
