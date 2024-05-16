@@ -223,7 +223,7 @@ public class TextureLibrary {
 	/**
 	 * Create a cube map from six image files.
 	 *
-	 * @param filename	An arrange containing six filenames in the order [+X, -X, +Y, -Y, +Z, -Z]
+	 * @param filename	An array containing six filenames in the order [+X, -X, +Y, -Y, +Z, -Z]
 	 * @param flipY Flip the images around the Y axis
 	 * @return The OpenGL handle to the cubemap
 	 * @throws IOException
