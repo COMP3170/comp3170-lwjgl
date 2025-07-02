@@ -156,7 +156,7 @@ public class InputManager implements IWindowInputListener {
 	 * Returns the position of the cursor, in screen coordinates,
 	 * relative to the upper-left corner of the content area of the window.
 	 *
-	 * @param dest	A pre-allocated Vector2f into which to write the result
+	 * @param dest	A pre-allocated Vector2i into which to write the result
 	 * @return
 	 */
 
